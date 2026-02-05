@@ -27,9 +27,11 @@ export function GameCanvas({ level, onLevelComplete, onGameOver, isMobile }: Gam
     const canvas = canvasRef.current
     if (!canvas) return
 
-    // Set canvas size
-    canvas.width = 800
-    canvas.height = 600
+    // Set canvas size based on device
+    const width = isMobile ? Math.min(window.innerWidth - 16, 400) : 800
+    const height = isMobile ? 480 : 600
+    canvas.width = width
+    canvas.height = height
 
     // Initialize engine
     const engine = new GameEngine(canvas, level)
@@ -69,28 +71,28 @@ export function GameCanvas({ level, onLevelComplete, onGameOver, isMobile }: Gam
 
   return (
     <>
-      <div className="flex flex-col items-center gap-4">
+      <div className="flex flex-col items-center gap-2 sm:gap-4">
         <div className="relative">
           <canvas
             ref={canvasRef}
-            className="border-4 border-gray-800 rounded-lg shadow-lg bg-sky-300"
+            className="border-2 sm:border-4 border-gray-800 rounded-lg shadow-lg bg-sky-300 max-w-full"
           />
           {showControls && (
-            <div className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-lg">
-              <div className="bg-white p-8 rounded-lg text-center">
-                <h3 className="text-xl font-bold mb-4">Controls</h3>
-                <div className="space-y-2 text-sm">
+            <div className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-lg p-2">
+              <div className="bg-white p-4 sm:p-8 rounded-lg text-center">
+                <h3 className="text-base sm:text-xl font-bold mb-2 sm:mb-4">Controls</h3>
+                <div className="space-y-1 sm:space-y-2 text-xs sm:text-sm">
                   {isMobile ? (
                     <>
-                      <p>👆 Swipe or tap buttons to move</p>
-                      <p>⬆️ Tap jump button</p>
-                      <p>Collect gems and reach the exit!</p>
+                      <p>Tap buttons to move</p>
+                      <p>Tap jump button</p>
+                      <p>Collect gems!</p>
                     </>
                   ) : (
                     <>
-                      <p>← → Arrow Keys: Move</p>
+                      <p>Arrow Keys: Move</p>
                       <p>Space: Jump</p>
-                      <p>Collect gems and reach the exit!</p>
+                      <p>Collect gems!</p>
                     </>
                   )}
                 </div>

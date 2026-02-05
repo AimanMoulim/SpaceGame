@@ -20,63 +20,60 @@ export function MainMenu({ onStartGame, soundEnabled, onToggleSound, username }:
   const [showLevelSelect, setShowLevelSelect] = useState(false)
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-sky-300 via-sky-200 to-yellow-100 flex items-center justify-center p-4">
-      <div className="text-center space-y-8 max-w-2xl">
+    <div className="min-h-screen bg-gradient-to-b from-sky-300 via-sky-200 to-yellow-100 flex items-center justify-center p-2 sm:p-4 overflow-x-hidden">
+      <div className="text-center space-y-4 sm:space-y-8 max-w-2xl w-full">
         {/* Title */}
-        <div className="space-y-2">
-          <h1 className="text-6xl font-bold text-amber-900 drop-shadow-lg">
-            🏜️ Treasure of the Lost Oasis
+        <div className="space-y-1 sm:space-y-2">
+          <h1 className="text-3xl sm:text-6xl font-bold text-amber-900 drop-shadow-lg">
+            Treasure Quest
           </h1>
-          <p className="text-xl text-amber-800">An adventure awaits!</p>
+          <p className="text-sm sm:text-xl text-amber-800">An adventure awaits!</p>
         </div>
 
         {/* Game Info */}
-        <div className="bg-white/80 rounded-lg p-6 shadow-lg space-y-3">
-          <h2 className="text-2xl font-bold text-amber-900">Welcome, {username}!</h2>
-          <p className="text-amber-800">
-            Explore mystical lands, collect shimmering gems, and reach the exit safely.
+        <div className="bg-white/80 rounded-lg p-4 sm:p-6 shadow-lg space-y-2 sm:space-y-3 text-center">
+          <h2 className="text-lg sm:text-2xl font-bold text-amber-900">Welcome, {username}!</h2>
+          <p className="text-xs sm:text-base text-amber-800 line-clamp-3">
+            Explore mystical lands, collect gems, and reach the exit safely.
           </p>
-          <p className="text-sm text-amber-700">
-            Watch out for spikes and lava! Use your 3 lives wisely.
-          </p>
-          <p className="text-xs text-gray-600 pt-2">
-            Your progress is automatically saved to the cloud! 🌐
+          <p className="text-xs text-amber-700">
+            Watch out for hazards! Use your 3 lives wisely.
           </p>
         </div>
 
         {/* Buttons */}
         {!showLevelSelect ? (
-          <div className="space-y-3 flex flex-col">
+          <div className="space-y-2 sm:space-y-3 flex flex-col">
             <Button
               onClick={() => onStartGame(1)}
-              className="text-lg py-6 bg-amber-600 hover:bg-amber-700 text-white"
+              className="text-sm sm:text-lg py-4 sm:py-6 bg-amber-600 hover:bg-amber-700 text-white font-semibold"
               size="lg"
             >
-              ▶ Start Game
+              Start Game
             </Button>
 
             <Button
-              onClick={() => setShowLevelSelect(true)}
-              className="text-lg py-6 bg-blue-600 hover:bg-blue-700 text-white"
+              onClick={() => setShowLevelSelect(false)}
+              className="text-sm sm:text-lg py-4 sm:py-6 bg-gray-600 hover:bg-gray-700 text-white font-semibold"
               variant="default"
               size="lg"
             >
-              📍 Level Select
+              Back
             </Button>
 
             <Button
               onClick={onToggleSound}
-              className="text-lg py-6 bg-green-600 hover:bg-green-700 text-white"
+              className="text-sm sm:text-lg py-4 sm:py-6 bg-green-600 hover:bg-green-700 text-white font-semibold"
               variant="default"
               size="lg"
             >
-              {soundEnabled ? '🔊 Sound On' : '🔇 Sound Off'}
+              {soundEnabled ? 'Sound On' : 'Sound Off'}
             </Button>
           </div>
         ) : (
-          <div className="space-y-4">
-            <h3 className="text-2xl font-bold text-amber-900">Select Level</h3>
-            <div className="grid grid-cols-2 gap-3">
+          <div className="space-y-3 sm:space-y-4">
+            <h3 className="text-lg sm:text-2xl font-bold text-amber-900">Select Level</h3>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
               {LEVELS.map((level) => (
                 <Button
                   key={level.id}

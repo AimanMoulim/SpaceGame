@@ -78,20 +78,23 @@ export function GameControls({ engineRef, isMobile }: GameControlsProps) {
   }
 
   return (
-    <div className="fixed bottom-6 left-0 right-0 flex justify-center gap-4 px-4">
-      <div className="flex gap-2">
+    <div className="fixed bottom-4 left-0 right-0 flex justify-center gap-2 px-2 sm:gap-3 sm:px-4 sm:bottom-6 z-50">
+      <div className="flex gap-2 sm:gap-3 touch-none select-none">
         <Button
           onMouseDown={handleLeftPress}
           onMouseUp={handleLeftRelease}
           onTouchStart={handleLeftPress}
           onTouchEnd={handleLeftRelease}
-          className="w-16 h-16 bg-blue-600 hover:bg-blue-700 text-white text-2xl font-bold rounded-lg"
+          className="w-14 h-14 sm:w-16 sm:h-16 bg-blue-600 hover:bg-blue-700 text-white text-xl sm:text-2xl font-bold rounded-lg active:scale-95 transition-transform"
         >
           ◀
         </Button>
         <Button
           onMouseDown={handleJump}
-          className="w-16 h-16 bg-green-600 hover:bg-green-700 text-white text-2xl font-bold rounded-lg"
+          onMouseUp={handleJump}
+          onTouchStart={handleJump}
+          onTouchEnd={handleJump}
+          className="w-14 h-14 sm:w-16 sm:h-16 bg-green-600 hover:bg-green-700 text-white text-xl sm:text-2xl font-bold rounded-lg active:scale-95 transition-transform"
         >
           ⬆
         </Button>
@@ -100,7 +103,7 @@ export function GameControls({ engineRef, isMobile }: GameControlsProps) {
           onMouseUp={handleRightRelease}
           onTouchStart={handleRightPress}
           onTouchEnd={handleRightRelease}
-          className="w-16 h-16 bg-blue-600 hover:bg-blue-700 text-white text-2xl font-bold rounded-lg"
+          className="w-14 h-14 sm:w-16 sm:h-16 bg-blue-600 hover:bg-blue-700 text-white text-xl sm:text-2xl font-bold rounded-lg active:scale-95 transition-transform"
         >
           ▶
         </Button>

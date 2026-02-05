@@ -164,20 +164,20 @@ export function GameScreen() {
       )}
 
       {gameState === 'playing' && currentLevel && (
-        <div className="min-h-screen bg-gradient-to-b from-blue-400 to-green-200 flex flex-col items-center justify-center p-4 pb-32 md:pb-4">
+        <div className="min-h-screen bg-gradient-to-b from-blue-400 to-green-200 flex flex-col items-center justify-center p-2 sm:p-4 pb-28 sm:pb-4 overflow-x-hidden">
           <div className="w-full max-w-3xl">
-            <div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-2">
-              <div className="text-center md:text-left">
-                <p className="text-sm text-white drop-shadow-lg">Player: {username}</p>
-                <h2 className="text-2xl font-bold text-white drop-shadow-lg">
+            <div className="flex flex-col sm:flex-row justify-between items-center mb-2 sm:mb-4 gap-1 sm:gap-2 px-1">
+              <div className="text-center sm:text-left">
+                <p className="text-xs sm:text-sm text-white drop-shadow-lg">Player: {username}</p>
+                <h2 className="text-lg sm:text-2xl font-bold text-white drop-shadow-lg truncate">
                   {currentLevel.name}
                 </h2>
               </div>
               <button
                 onClick={handleReturnToMenu}
-                className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded font-bold"
+                className="bg-red-600 hover:bg-red-700 text-white px-2 sm:px-4 py-1 sm:py-2 rounded font-bold text-xs sm:text-base whitespace-nowrap"
               >
-                ✕ Menu
+                Menu
               </button>
             </div>
 
@@ -188,10 +188,10 @@ export function GameScreen() {
               isMobile={isMobile}
             />
 
-            <p className="text-white text-center mt-4 text-sm drop-shadow-lg">
+            <p className="text-white text-center mt-2 sm:mt-4 text-xs sm:text-sm drop-shadow-lg px-2">
               {isMobile
-                ? 'Use buttons below to move and jump. Collect gems and reach the exit!'
-                : 'Use Arrow Keys to move, Space to jump. Collect gems and reach the exit!'}
+                ? 'Use buttons to move and jump'
+                : 'Arrow Keys to move, Space to jump'}
             </p>
           </div>
         </div>

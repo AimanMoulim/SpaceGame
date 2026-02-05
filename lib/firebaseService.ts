@@ -39,6 +39,41 @@ export async function getUserProgress(userId: string): Promise<GameProgress | nu
   }
 }
 
+export async function checkUsernameExists(username: string): Promise<boolean> {
+  try {
+    const playersRef = ref(database, 'players')
+    const snapshot = await get(playersRef)
+    if (!snapshot.exists()) return false
+    
+    const players = snapshot.val()
+    return Object.values(players).some((player: any) => 
+      player.username?.toLowerCase() === username.toLowerCase()
+    )
+  } catch (error) {
+    console.error('Error checking username:', error)
+    return false
+  }
+}
+
+export async function getUserByUsername(username: string): Promise<{ userId: string; profile: GameProgress } | null> {
+  try {
+    const playersRef = ref(database, 'players')
+    const snapshot = await get(playersRef)
+    if (!snapshot.exists()) return null
+    
+    const players = snapshot.val()
+    for (const [userId, player] of Object.entries(players)) {
+      if ((player as any).username?.toLowerCase() === username.toLowerCase()) {
+        return { userId, profile: player as GameProgress }
+      }
+    }
+    return null
+  } catch (error) {
+    console.error('Error getting user by username:', error)
+    return null
+  }
+}
+
 export async function initializeUserProfile(userId: string, username: string) {
   try {
     const userRef = ref(database, `players/${userId}`)
