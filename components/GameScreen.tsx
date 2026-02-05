@@ -165,16 +165,16 @@ export function GameScreen() {
       )}
 
       {gameState === 'playing' && currentLevel && (
-        <div className="min-h-screen bg-gradient-to-b from-blue-400 to-green-200 flex flex-col items-center justify-center p-2 sm:p-4 pb-28 sm:pb-4 overflow-x-hidden">
-          <div className="w-full max-w-3xl">
-            <div className="flex flex-col sm:flex-row justify-between items-center mb-2 sm:mb-4 gap-2 sm:gap-2 px-1">
-              <div className="text-center sm:text-left">
+        <div className="h-screen bg-gradient-to-b from-blue-400 to-green-200 flex flex-col items-center justify-start overflow-y-auto overflow-x-hidden">
+          <div className="w-full px-2 sm:px-4 py-2 sm:py-3 flex-shrink-0">
+            <div className="flex flex-col sm:flex-row justify-between items-center gap-2 sm:gap-3">
+              <div className="text-center sm:text-left min-w-0">
                 <p className="text-xs sm:text-sm text-white drop-shadow-lg">Player: {username}</p>
-                <h2 className="text-lg sm:text-2xl font-bold text-white drop-shadow-lg truncate">
+                <h2 className="text-base sm:text-2xl font-bold text-white drop-shadow-lg truncate">
                   {currentLevel.name}
                 </h2>
               </div>
-              <div className="flex gap-2">
+              <div className="flex gap-1 sm:gap-2 flex-shrink-0">
                 <button
                   onClick={handleToggleSound}
                   className="bg-gradient-to-b from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white px-2 sm:px-3 py-1 sm:py-2 rounded-lg font-bold text-xs sm:text-sm shadow-md transition-all"
@@ -190,7 +190,9 @@ export function GameScreen() {
                 </button>
               </div>
             </div>
+          </div>
 
+          <div className="flex-1 w-full flex flex-col items-center justify-center px-2 sm:px-4 py-2 min-w-0 overflow-hidden">
             <GameCanvas
               level={currentLevel}
               onLevelComplete={handleLevelComplete}
@@ -198,12 +200,14 @@ export function GameScreen() {
               isMobile={isMobile}
             />
 
-            <p className="text-white text-center mt-2 sm:mt-4 text-xs sm:text-sm drop-shadow-lg px-2">
+            <p className="text-white text-center mt-2 sm:mt-3 text-xs sm:text-sm drop-shadow-lg flex-shrink-0">
               {isMobile
                 ? 'Use buttons to move and jump'
                 : 'Arrow Keys to move, Space to jump'}
             </p>
           </div>
+
+          <div className="h-28 sm:h-0 flex-shrink-0" />
         </div>
       )}
 

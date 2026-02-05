@@ -27,9 +27,10 @@ export function GameCanvas({ level, onLevelComplete, onGameOver, isMobile }: Gam
     const canvas = canvasRef.current
     if (!canvas) return
 
-    // Set canvas size based on device
-    const width = isMobile ? Math.min(window.innerWidth - 16, 400) : 800
-    const height = isMobile ? 480 : 600
+    // Set canvas size based on device with better mobile optimization
+    const viewportWidth = Math.min(window.innerWidth, document.documentElement.clientWidth)
+    const width = isMobile ? Math.max(Math.min(viewportWidth - 32, 360), 280) : 800
+    const height = isMobile ? 360 : 600
     canvas.width = width
     canvas.height = height
 
@@ -71,11 +72,11 @@ export function GameCanvas({ level, onLevelComplete, onGameOver, isMobile }: Gam
 
   return (
     <>
-      <div className="flex flex-col items-center gap-2 sm:gap-4">
-        <div className="relative">
+      <div className="flex flex-col items-center gap-2 sm:gap-4 w-full max-w-full overflow-x-hidden">
+        <div className="relative w-full flex justify-center">
           <canvas
             ref={canvasRef}
-            className="border-2 sm:border-4 border-gray-800 rounded-lg shadow-lg bg-sky-300 max-w-full"
+            className="border-2 sm:border-4 border-gray-800 rounded-lg shadow-lg bg-sky-300 max-w-full h-auto"
           />
           {showControls && (
             <div className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-lg p-2">
