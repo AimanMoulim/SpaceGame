@@ -157,14 +157,40 @@ export class GameEngine {
     })
   }
 
+  // Public methods for mobile touch controls
+  moveLeft() {
+    this.keys['moveleft'] = true
+  }
+
+  moveRight() {
+    this.keys['moveright'] = true
+  }
+
+  stopMove() {
+    this.keys['moveleft'] = false
+    this.keys['moveright'] = false
+  }
+
+  jump() {
+    this.keys[' '] = true
+  }
+
+  stopJump() {
+    this.keys[' '] = false
+  }
+
+  get gemsCollected(): number {
+    return this.player.gems
+  }
+
   update() {
     if (!this.gameRunning) return
 
-    // Handle player input
-    if (this.keys['arrowleft']) {
+    // Handle player input (keyboard + touch)
+    if (this.keys['arrowleft'] || this.keys['moveleft']) {
       this.player.velocityX = -MOVE_SPEED
       this.player.isFacingRight = false
-    } else if (this.keys['arrowright']) {
+    } else if (this.keys['arrowright'] || this.keys['moveright']) {
       this.player.velocityX = MOVE_SPEED
       this.player.isFacingRight = true
     } else {
@@ -172,7 +198,7 @@ export class GameEngine {
     }
 
     // Jump
-    if (this.keys[' '] && !this.player.isJumping) {
+    if ((this.keys[' '] || this.keys['jump']) && !this.player.isJumping) {
       this.player.velocityY = -JUMP_POWER
       this.player.isJumping = true
     }

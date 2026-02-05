@@ -182,27 +182,46 @@ export function GameScreenMobile() {
           {/* Mobile Controls */}
           <div className="flex-shrink-0 h-24 bg-black/5 border-t border-black/10 flex items-center justify-center gap-3 px-2 py-2">
             <button
-              onMouseDown={() => gameEngineRef.current?.moveLeft()}
-              onMouseUp={() => gameEngineRef.current?.stopMove()}
-              onTouchStart={() => gameEngineRef.current?.moveLeft()}
-              onTouchEnd={() => gameEngineRef.current?.stopMove()}
-              className="w-16 h-16 bg-gradient-to-b from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 active:from-blue-700 active:to-blue-800 text-white text-2xl font-bold rounded-lg shadow-lg transition-all active:scale-95"
+              onPointerDown={() => {
+                console.log('[v0] Left button pressed')
+                gameEngineRef.current?.moveLeft()
+              }}
+              onPointerUp={() => {
+                console.log('[v0] Left button released')
+                gameEngineRef.current?.stopMove()
+              }}
+              onPointerLeave={() => gameEngineRef.current?.stopMove()}
+              className="w-16 h-16 bg-gradient-to-b from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 active:from-blue-700 active:to-blue-800 text-white text-2xl font-bold rounded-lg shadow-lg transition-all active:scale-95 select-none"
+              style={{ touchAction: 'none' }}
             >
               ◀
             </button>
             <button
-              onMouseDown={() => gameEngineRef.current?.jump()}
-              onTouchStart={() => gameEngineRef.current?.jump()}
-              className="w-16 h-16 bg-gradient-to-b from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 active:from-emerald-700 active:to-emerald-800 text-white text-2xl font-bold rounded-lg shadow-lg transition-all active:scale-95"
+              onPointerDown={() => {
+                console.log('[v0] Jump button pressed')
+                gameEngineRef.current?.jump()
+              }}
+              onPointerUp={() => {
+                console.log('[v0] Jump button released')
+                gameEngineRef.current?.stopJump()
+              }}
+              className="w-16 h-16 bg-gradient-to-b from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 active:from-emerald-700 active:to-emerald-800 text-white text-2xl font-bold rounded-lg shadow-lg transition-all active:scale-95 select-none"
+              style={{ touchAction: 'none' }}
             >
               ⬆
             </button>
             <button
-              onMouseDown={() => gameEngineRef.current?.moveRight()}
-              onMouseUp={() => gameEngineRef.current?.stopMove()}
-              onTouchStart={() => gameEngineRef.current?.moveRight()}
-              onTouchEnd={() => gameEngineRef.current?.stopMove()}
-              className="w-16 h-16 bg-gradient-to-b from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 active:from-blue-700 active:to-blue-800 text-white text-2xl font-bold rounded-lg shadow-lg transition-all active:scale-95"
+              onPointerDown={() => {
+                console.log('[v0] Right button pressed')
+                gameEngineRef.current?.moveRight()
+              }}
+              onPointerUp={() => {
+                console.log('[v0] Right button released')
+                gameEngineRef.current?.stopMove()
+              }}
+              onPointerLeave={() => gameEngineRef.current?.stopMove()}
+              className="w-16 h-16 bg-gradient-to-b from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 active:from-blue-700 active:to-blue-800 text-white text-2xl font-bold rounded-lg shadow-lg transition-all active:scale-95 select-none"
+              style={{ touchAction: 'none' }}
             >
               ▶
             </button>
