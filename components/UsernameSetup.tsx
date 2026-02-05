@@ -13,9 +13,19 @@ interface UsernameSetupProps {
 
 export function UsernameSetup({ onUsernameSet }: UsernameSetupProps) {
   const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [isLogin, setIsLogin] = useState(false)
+
+  const validatePassword = (pwd: string): string | null => {
+    if (pwd.length < 6) return 'Password must be at least 6 characters'
+    if (pwd.length > 50) return 'Password must be at most 50 characters'
+    if (!/[A-Z]/.test(pwd)) return 'Password must contain at least one uppercase letter'
+    if (!/[0-9]/.test(pwd)) return 'Password must contain at least one number'
+    return null
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -35,17 +45,33 @@ export function UsernameSetup({ onUsernameSet }: UsernameSetupProps) {
       return
     }
 
+    if (!password) {
+      setError('Please enter a password')
+      return
+    }
+
+    const passwordError = validatePassword(password)
+    if (passwordError) {
+      setError(passwordError)
+      return
+    }
+
+    if (!isLogin && password !== confirmPassword) {
+      setError('Passwords do not match')
+      return
+    }
+
     setLoading(true)
     setError('')
 
     try {
       if (isLogin) {
-        // Login: Check if username exists
-        const existing = await getUserByUsername(username.trim())
+        // Login: Check username and password
+        const existing = await getUserByUsername(username.trim(), password)
         if (existing) {
           onUsernameSet(existing.userId, username.trim())
         } else {
-          setError('Username not found. Create a new account?')
+          setError('Invalid username or password')
         }
       } else {
         // Signup: Check if username already exists
@@ -55,7 +81,7 @@ export function UsernameSetup({ onUsernameSet }: UsernameSetupProps) {
           setIsLogin(true)
         } else {
           const userId = `user_${Date.now()}`
-          const success = await initializeUserProfile(userId, username.trim())
+          const success = await initializeUserProfile(userId, username.trim(), password)
           
           if (success) {
             onUsernameSet(userId, username.trim())
@@ -90,19 +116,69 @@ export function UsernameSetup({ onUsernameSet }: UsernameSetupProps) {
           </h2>
           
           <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
+            {/* Username Field */}
             <div>
+              <label className="text-xs font-semibold text-slate-700 mb-1 block">Username</label>
               <Input
                 type="text"
                 placeholder="Enter your explorer name"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 disabled={loading}
-                className="text-center text-sm sm:text-base py-3 sm:py-4 border-2 border-slate-200 rounded-lg focus:border-yellow-500 focus:outline-none transition-colors"
+                className="w-full text-sm sm:text-base py-2 sm:py-3 px-3 border-2 border-slate-200 rounded-lg focus:border-yellow-500 focus:outline-none transition-colors"
                 maxLength={20}
                 autoComplete="off"
               />
-              <p className="text-xs text-slate-500 mt-2 text-center">{username.length}/20 characters</p>
+              <p className="text-xs text-slate-500 mt-1">{username.length}/20 characters</p>
             </div>
+
+            {/* Password Field */}
+            <div>
+              <label className="text-xs font-semibold text-slate-700 mb-1 block">Password</label>
+              <Input
+                type="password"
+                placeholder="Enter a secure password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                disabled={loading}
+                className="w-full text-sm sm:text-base py-2 sm:py-3 px-3 border-2 border-slate-200 rounded-lg focus:border-yellow-500 focus:outline-none transition-colors"
+                autoComplete={isLogin ? 'current-password' : 'new-password'}
+              />
+              {!isLogin && password && (
+                <div className="text-xs text-slate-600 mt-2 space-y-1">
+                  <p className={password.length >= 6 ? 'text-green-600' : 'text-slate-500'}>
+                    {password.length >= 6 ? '✓' : '•'} At least 6 characters
+                  </p>
+                  <p className={/[A-Z]/.test(password) ? 'text-green-600' : 'text-slate-500'}>
+                    {/[A-Z]/.test(password) ? '✓' : '•'} One uppercase letter
+                  </p>
+                  <p className={/[0-9]/.test(password) ? 'text-green-600' : 'text-slate-500'}>
+                    {/[0-9]/.test(password) ? '✓' : '•'} One number
+                  </p>
+                </div>
+              )}
+            </div>
+
+            {/* Confirm Password Field - Signup only */}
+            {!isLogin && (
+              <div>
+                <label className="text-xs font-semibold text-slate-700 mb-1 block">Confirm Password</label>
+                <Input
+                  type="password"
+                  placeholder="Confirm your password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  disabled={loading}
+                  className="w-full text-sm sm:text-base py-2 sm:py-3 px-3 border-2 border-slate-200 rounded-lg focus:border-yellow-500 focus:outline-none transition-colors"
+                  autoComplete="new-password"
+                />
+                {confirmPassword && (
+                  <p className={password === confirmPassword ? 'text-green-600 text-xs mt-1' : 'text-red-600 text-xs mt-1'}>
+                    {password === confirmPassword ? '✓ Passwords match' : '✗ Passwords do not match'}
+                  </p>
+                )}
+              </div>
+            )}
 
             {error && (
               <div className="bg-red-50 border border-red-200 rounded-lg p-3 sm:p-4">
@@ -116,7 +192,7 @@ export function UsernameSetup({ onUsernameSet }: UsernameSetupProps) {
               className="w-full text-base sm:text-lg py-3 sm:py-4 bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white font-bold rounded-lg shadow-lg transition-all hover:shadow-xl disabled:opacity-50"
               size="lg"
             >
-              {loading ? 'Starting adventure...' : isLogin ? 'Login' : 'Create Account'}
+              {loading ? 'Securing access...' : isLogin ? 'Login' : 'Create Account'}
             </Button>
           </form>
 
@@ -134,7 +210,7 @@ export function UsernameSetup({ onUsernameSet }: UsernameSetupProps) {
           </div>
 
           <p className="text-xs text-slate-600 text-center pt-2 bg-blue-50 rounded-lg py-2">
-            Your progress is saved to the cloud
+            Your account is secure and progress saved to the cloud
           </p>
         </div>
       </div>

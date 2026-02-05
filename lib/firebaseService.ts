@@ -1,8 +1,10 @@
 import { database } from './firebase'
 import { ref, set, get, update } from 'firebase/database'
+import { hashPassword, verifyPassword } from './passwordHash'
 
 export interface GameProgress {
   username: string
+  passwordHash: string
   currentLevel: number
   totalGemsCollected: number
   bestScores: { [levelId: number]: number }
@@ -55,7 +57,7 @@ export async function checkUsernameExists(username: string): Promise<boolean> {
   }
 }
 
-export async function getUserByUsername(username: string): Promise<{ userId: string; profile: GameProgress } | null> {
+export async function getUserByUsername(username: string, password?: string): Promise<{ userId: string; profile: GameProgress } | null> {
   try {
     const playersRef = ref(database, 'players')
     const snapshot = await get(playersRef)
@@ -63,8 +65,16 @@ export async function getUserByUsername(username: string): Promise<{ userId: str
     
     const players = snapshot.val()
     for (const [userId, player] of Object.entries(players)) {
-      if ((player as any).username?.toLowerCase() === username.toLowerCase()) {
-        return { userId, profile: player as GameProgress }
+      const playerData = player as any
+      if (playerData.username?.toLowerCase() === username.toLowerCase()) {
+        // If password is provided, verify it
+        if (password) {
+          const isValid = await verifyPassword(password, playerData.passwordHash)
+          if (!isValid) {
+            return null // Wrong password
+          }
+        }
+        return { userId, profile: playerData as GameProgress }
       }
     }
     return null
@@ -74,11 +84,15 @@ export async function getUserByUsername(username: string): Promise<{ userId: str
   }
 }
 
-export async function initializeUserProfile(userId: string, username: string) {
+export async function initializeUserProfile(userId: string, username: string, password: string) {
   try {
+    // Hash the password
+    const passwordHash = await hashPassword(password)
+    
     const userRef = ref(database, `players/${userId}`)
     await set(userRef, {
       username,
+      passwordHash,
       currentLevel: 1,
       totalGemsCollected: 0,
       bestScores: {},
