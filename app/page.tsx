@@ -1,5 +1,5 @@
-import { GameScreen } from '@/components/GameScreen'
+import { GameScreenWrapper } from '@/components/GameScreenWrapper'
 
 export default function Page() {
-  return <GameScreen />
+  return <GameScreenWrapper />
 }
