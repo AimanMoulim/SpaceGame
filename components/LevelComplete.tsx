@@ -14,6 +14,7 @@ interface LevelCompleteProps {
   lives: number
   onNextLevel: () => void
   onMenu: () => void
+  username?: string | null
 }
 
 export function LevelComplete({
@@ -22,6 +23,7 @@ export function LevelComplete({
   lives,
   onNextLevel,
   onMenu,
+  username,
 }: LevelCompleteProps) {
   const isLast = isLastLevel(currentLevelId)
 
@@ -37,7 +39,7 @@ export function LevelComplete({
         {/* Stats */}
         <div className="bg-white/90 rounded-lg p-8 shadow-lg space-y-4">
           <div className="text-2xl text-amber-900">
-            <p className="font-bold mb-4">Great Job, Explorer!</p>
+            <p className="font-bold mb-4">Great Job, {username}!</p>
 
             <div className="space-y-3 text-lg">
               <p>💎 Gems Collected: {gems}</p>

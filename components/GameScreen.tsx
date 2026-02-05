@@ -10,46 +10,77 @@ import { GameCanvas } from './GameCanvas'
 import { MainMenu } from './MainMenu'
 import { LevelComplete } from './LevelComplete'
 import { GameOver } from './GameOver'
+import { UsernameSetup } from './UsernameSetup'
 import { getLevelById, getNextLevel } from '@/lib/levels'
+import { getUserProgress, saveUserProgress, updateLevelStats } from '@/lib/firebaseService'
 import type { Level } from '@/lib/gameEngine'
 
-type GameState = 'menu' | 'playing' | 'levelComplete' | 'gameOver'
+type GameState = 'setup' | 'menu' | 'playing' | 'levelComplete' | 'gameOver'
 
 export function GameScreen() {
-  const [gameState, setGameState] = useState<GameState>('menu')
+  const [gameState, setGameState] = useState<GameState>('setup')
   const [currentLevel, setCurrentLevel] = useState<Level | null>(null)
   const [currentLevelId, setCurrentLevelId] = useState(1)
   const [soundEnabled, setSoundEnabled] = useState(true)
   const [levelStats, setLevelStats] = useState({ gems: 0, lives: 3 })
   const [isHydrated, setIsHydrated] = useState(false)
+  const [userId, setUserId] = useState<string | null>(null)
+  const [username, setUsername] = useState<string | null>(null)
+  const [isMobile, setIsMobile] = useState(false)
 
-  // Load progress from localStorage after hydration
+  // Check if mobile on hydration
   useEffect(() => {
     setIsHydrated(true)
+    setIsMobile(window.innerWidth < 768)
+    
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768)
+    }
+
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
+  // Load progress from localStorage and Firebase after hydration
+  useEffect(() => {
+    if (!isHydrated) return
+
     const saved = localStorage.getItem('treasureGameProgress')
     if (saved) {
       try {
         const progress = JSON.parse(saved)
+        setUserId(progress.userId)
+        setUsername(progress.username)
         setCurrentLevelId(progress.levelId || 1)
         setSoundEnabled(progress.soundEnabled !== false)
+        setGameState('menu')
       } catch (e) {
         console.error('Error loading progress:', e)
+        setGameState('setup')
       }
     }
-  }, [])
+  }, [isHydrated])
 
-  // Save progress to localStorage
+  // Save progress to localStorage when user changes
   useEffect(() => {
-    if (!isHydrated) return
+    if (!isHydrated || !userId) return
     localStorage.setItem(
       'treasureGameProgress',
       JSON.stringify({
+        userId,
+        username,
         levelId: currentLevelId,
         soundEnabled,
         timestamp: Date.now(),
       })
     )
-  }, [currentLevelId, soundEnabled, isHydrated])
+  }, [isHydrated, userId, username, currentLevelId, soundEnabled])
+
+  const handleUsernameSet = (newUserId: string, newUsername: string) => {
+    setUserId(newUserId)
+    setUsername(newUsername)
+    setGameState('menu')
+  }
 
   const handleStartGame = (levelId: number) => {
     const level = getLevelById(levelId)
@@ -61,12 +92,25 @@ export function GameScreen() {
     }
   }
 
-  const handleLevelComplete = () => {
-    // Get stats from the game engine (this would be passed from GameCanvas)
+  const handleLevelComplete = (gemsCollected: number) => {
+    setLevelStats({ gems: gemsCollected, lives: 3 })
+    
+    // Save stats to Firebase
+    if (userId) {
+      updateLevelStats(userId, currentLevelId, gemsCollected, true)
+    }
+    
     setGameState('levelComplete')
   }
 
-  const handleGameOver = () => {
+  const handleGameOver = (gemsCollected: number) => {
+    setLevelStats({ gems: gemsCollected, lives: 0 })
+    
+    // Save attempt stats to Firebase
+    if (userId) {
+      updateLevelStats(userId, currentLevelId, gemsCollected, false)
+    }
+    
     setGameState('gameOver')
   }
 
@@ -106,21 +150,29 @@ export function GameScreen() {
 
   return (
     <>
+      {gameState === 'setup' && (
+        <UsernameSetup onUsernameSet={handleUsernameSet} />
+      )}
+
       {gameState === 'menu' && (
         <MainMenu
           onStartGame={handleStartGame}
           soundEnabled={soundEnabled}
           onToggleSound={handleToggleSound}
+          username={username}
         />
       )}
 
       {gameState === 'playing' && currentLevel && (
-        <div className="min-h-screen bg-gradient-to-b from-blue-400 to-green-200 flex flex-col items-center justify-center p-4">
+        <div className="min-h-screen bg-gradient-to-b from-blue-400 to-green-200 flex flex-col items-center justify-center p-4 pb-32 md:pb-4">
           <div className="w-full max-w-3xl">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-2xl font-bold text-white drop-shadow-lg">
-                {currentLevel.name}
-              </h2>
+            <div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-2">
+              <div className="text-center md:text-left">
+                <p className="text-sm text-white drop-shadow-lg">Player: {username}</p>
+                <h2 className="text-2xl font-bold text-white drop-shadow-lg">
+                  {currentLevel.name}
+                </h2>
+              </div>
               <button
                 onClick={handleReturnToMenu}
                 className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded font-bold"
@@ -131,16 +183,15 @@ export function GameScreen() {
 
             <GameCanvas
               level={currentLevel}
-              onLevelComplete={() => {
-                // Simulate getting stats - in a real game, this would come from the engine
-                setLevelStats({ gems: 5, lives: 2 })
-                handleLevelComplete()
-              }}
+              onLevelComplete={handleLevelComplete}
               onGameOver={handleGameOver}
+              isMobile={isMobile}
             />
 
             <p className="text-white text-center mt-4 text-sm drop-shadow-lg">
-              Use Arrow Keys to move, Space to jump. Collect gems and reach the exit!
+              {isMobile
+                ? 'Use buttons below to move and jump. Collect gems and reach the exit!'
+                : 'Use Arrow Keys to move, Space to jump. Collect gems and reach the exit!'}
             </p>
           </div>
         </div>
@@ -153,6 +204,7 @@ export function GameScreen() {
           lives={levelStats.lives}
           onNextLevel={handleNextLevel}
           onMenu={handleReturnToMenu}
+          username={username}
         />
       )}
 
@@ -162,6 +214,7 @@ export function GameScreen() {
           gems={levelStats.gems}
           onRetry={handleRetry}
           onMenu={handleReturnToMenu}
+          username={username}
         />
       )}
     </>

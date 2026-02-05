@@ -13,9 +13,10 @@ interface MainMenuProps {
   onStartGame: (levelId: number) => void
   soundEnabled: boolean
   onToggleSound: () => void
+  username?: string | null
 }
 
-export function MainMenu({ onStartGame, soundEnabled, onToggleSound }: MainMenuProps) {
+export function MainMenu({ onStartGame, soundEnabled, onToggleSound, username }: MainMenuProps) {
   const [showLevelSelect, setShowLevelSelect] = useState(false)
 
   return (
@@ -31,12 +32,15 @@ export function MainMenu({ onStartGame, soundEnabled, onToggleSound }: MainMenuP
 
         {/* Game Info */}
         <div className="bg-white/80 rounded-lg p-6 shadow-lg space-y-3">
-          <h2 className="text-2xl font-bold text-amber-900">Welcome, Explorer!</h2>
+          <h2 className="text-2xl font-bold text-amber-900">Welcome, {username}!</h2>
           <p className="text-amber-800">
             Explore mystical lands, collect shimmering gems, and reach the exit safely.
           </p>
           <p className="text-sm text-amber-700">
             Watch out for spikes and lava! Use your 3 lives wisely.
+          </p>
+          <p className="text-xs text-gray-600 pt-2">
+            Your progress is automatically saved to the cloud! 🌐
           </p>
         </div>
 

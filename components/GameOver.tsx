@@ -12,9 +12,10 @@ interface GameOverProps {
   gems: number
   onRetry: () => void
   onMenu: () => void
+  username?: string | null
 }
 
-export function GameOver({ currentLevelId, gems, onRetry, onMenu }: GameOverProps) {
+export function GameOver({ currentLevelId, gems, onRetry, onMenu, username }: GameOverProps) {
   return (
     <div className="min-h-screen bg-gradient-to-b from-red-200 to-orange-100 flex items-center justify-center p-4">
       <div className="text-center space-y-8 max-w-2xl">
@@ -27,7 +28,7 @@ export function GameOver({ currentLevelId, gems, onRetry, onMenu }: GameOverProp
         {/* Stats */}
         <div className="bg-white/90 rounded-lg p-8 shadow-lg space-y-4">
           <div className="text-2xl text-red-900">
-            <p className="font-bold mb-4">You ran out of lives!</p>
+            <p className="font-bold mb-4">{username}, you ran out of lives!</p>
 
             <div className="space-y-3 text-lg">
               <p>📍 Level: {currentLevelId}</p>
