@@ -179,52 +179,41 @@ export function GameScreenMobile() {
             />
           </div>
 
-          {/* Mobile Controls */}
-          <div className="flex-shrink-0 h-24 bg-black/5 border-t border-black/10 flex items-center justify-center gap-3 px-2 py-2">
-            <button
-              onPointerDown={() => {
-                console.log('[v0] Left button pressed')
-                gameEngineRef.current?.moveLeft()
-              }}
-              onPointerUp={() => {
-                console.log('[v0] Left button released')
-                gameEngineRef.current?.stopMove()
-              }}
-              onPointerLeave={() => gameEngineRef.current?.stopMove()}
-              className="w-16 h-16 bg-gradient-to-b from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 active:from-blue-700 active:to-blue-800 text-white text-2xl font-bold rounded-lg shadow-lg transition-all active:scale-95 select-none"
-              style={{ touchAction: 'none' }}
-            >
-              ◀
-            </button>
-            <button
-              onPointerDown={() => {
-                console.log('[v0] Jump button pressed')
-                gameEngineRef.current?.jump()
-              }}
-              onPointerUp={() => {
-                console.log('[v0] Jump button released')
-                gameEngineRef.current?.stopJump()
-              }}
-              className="w-16 h-16 bg-gradient-to-b from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 active:from-emerald-700 active:to-emerald-800 text-white text-2xl font-bold rounded-lg shadow-lg transition-all active:scale-95 select-none"
-              style={{ touchAction: 'none' }}
-            >
-              ⬆
-            </button>
-            <button
-              onPointerDown={() => {
-                console.log('[v0] Right button pressed')
-                gameEngineRef.current?.moveRight()
-              }}
-              onPointerUp={() => {
-                console.log('[v0] Right button released')
-                gameEngineRef.current?.stopMove()
-              }}
-              onPointerLeave={() => gameEngineRef.current?.stopMove()}
-              className="w-16 h-16 bg-gradient-to-b from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 active:from-blue-700 active:to-blue-800 text-white text-2xl font-bold rounded-lg shadow-lg transition-all active:scale-95 select-none"
-              style={{ touchAction: 'none' }}
-            >
-              ▶
-            </button>
+          {/* Mobile Controls - Ergonomic Layout */}
+          <div className="flex-shrink-0 bg-gradient-to-t from-black/30 to-transparent px-4 py-4 flex items-end justify-center gap-4 min-h-28">
+            <div className="flex gap-3 items-end">
+              {/* Left Button */}
+              <button
+                onPointerDown={() => gameEngineRef.current?.moveLeft()}
+                onPointerUp={() => gameEngineRef.current?.stopMove()}
+                onPointerLeave={() => gameEngineRef.current?.stopMove()}
+                className="w-20 h-20 bg-gradient-to-br from-cyan-400 to-cyan-600 hover:from-cyan-500 hover:to-cyan-700 active:from-cyan-600 active:to-cyan-800 text-white text-3xl font-bold rounded-2xl shadow-2xl transition-all active:scale-90 select-none active:shadow-inner border-2 border-cyan-300/50"
+                style={{ touchAction: 'none' }}
+              >
+                ◀
+              </button>
+
+              {/* Jump Button - Centered and Larger */}
+              <button
+                onPointerDown={() => gameEngineRef.current?.jump()}
+                onPointerUp={() => gameEngineRef.current?.stopJump()}
+                className="w-24 h-24 bg-gradient-to-br from-amber-400 to-amber-600 hover:from-amber-500 hover:to-amber-700 active:from-amber-600 active:to-amber-800 text-white text-4xl font-bold rounded-3xl shadow-2xl transition-all active:scale-90 select-none active:shadow-inner border-2 border-amber-300/50 mb-2"
+                style={{ touchAction: 'none' }}
+              >
+                ⬆
+              </button>
+
+              {/* Right Button */}
+              <button
+                onPointerDown={() => gameEngineRef.current?.moveRight()}
+                onPointerUp={() => gameEngineRef.current?.stopMove()}
+                onPointerLeave={() => gameEngineRef.current?.stopMove()}
+                className="w-20 h-20 bg-gradient-to-br from-cyan-400 to-cyan-600 hover:from-cyan-500 hover:to-cyan-700 active:from-cyan-600 active:to-cyan-800 text-white text-3xl font-bold rounded-2xl shadow-2xl transition-all active:scale-90 select-none active:shadow-inner border-2 border-cyan-300/50"
+                style={{ touchAction: 'none' }}
+              >
+                ▶
+              </button>
+            </div>
           </div>
         </div>
       )}
