@@ -167,19 +167,28 @@ export function GameScreen() {
       {gameState === 'playing' && currentLevel && (
         <div className="min-h-screen bg-gradient-to-b from-blue-400 to-green-200 flex flex-col items-center justify-center p-2 sm:p-4 pb-28 sm:pb-4 overflow-x-hidden">
           <div className="w-full max-w-3xl">
-            <div className="flex flex-col sm:flex-row justify-between items-center mb-2 sm:mb-4 gap-1 sm:gap-2 px-1">
+            <div className="flex flex-col sm:flex-row justify-between items-center mb-2 sm:mb-4 gap-2 sm:gap-2 px-1">
               <div className="text-center sm:text-left">
                 <p className="text-xs sm:text-sm text-white drop-shadow-lg">Player: {username}</p>
                 <h2 className="text-lg sm:text-2xl font-bold text-white drop-shadow-lg truncate">
                   {currentLevel.name}
                 </h2>
               </div>
-              <button
-                onClick={handleReturnToMenu}
-                className="bg-red-600 hover:bg-red-700 text-white px-2 sm:px-4 py-1 sm:py-2 rounded font-bold text-xs sm:text-base whitespace-nowrap"
-              >
-                Menu
-              </button>
+              <div className="flex gap-2">
+                <button
+                  onClick={handleToggleSound}
+                  className="bg-gradient-to-b from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white px-2 sm:px-3 py-1 sm:py-2 rounded-lg font-bold text-xs sm:text-sm shadow-md transition-all"
+                  title="Toggle Sound"
+                >
+                  {soundEnabled ? '🔊' : '🔇'}
+                </button>
+                <button
+                  onClick={handleReturnToMenu}
+                  className="bg-gradient-to-b from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white px-2 sm:px-4 py-1 sm:py-2 rounded-lg font-bold text-xs sm:text-base shadow-md transition-all whitespace-nowrap"
+                >
+                  Menu
+                </button>
+              </div>
             </div>
 
             <GameCanvas

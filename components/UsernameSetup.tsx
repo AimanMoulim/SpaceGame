@@ -73,68 +73,68 @@ export function UsernameSetup({ onUsernameSet }: UsernameSetupProps) {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-sky-300 via-sky-200 to-yellow-100 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-slate-50 to-purple-50 flex items-center justify-center p-4">
       <div className="w-full max-w-sm space-y-4 sm:space-y-6">
         {/* Title */}
-        <div className="text-center space-y-1 sm:space-y-2">
-          <h1 className="text-4xl sm:text-5xl font-bold text-amber-900 drop-shadow-lg">
+        <div className="text-center space-y-1 sm:space-y-3">
+          <h1 className="text-5xl sm:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-500 via-orange-500 to-amber-600">
             Treasure Quest
           </h1>
-          <p className="text-base sm:text-lg text-amber-800">Welcome, Explorer!</p>
+          <p className="text-base sm:text-lg text-slate-600 font-medium">Begin your adventure</p>
         </div>
 
         {/* Username Form */}
-        <div className="bg-white/90 rounded-lg p-6 sm:p-8 shadow-lg space-y-4">
-          <h2 className="text-xl sm:text-2xl font-bold text-amber-900 text-center">
-            {isLogin ? 'Login' : 'Create Account'}
+        <div className="bg-white rounded-2xl p-6 sm:p-8 shadow-xl space-y-4 border border-slate-100 backdrop-blur-sm">
+          <h2 className="text-xl sm:text-2xl font-bold text-slate-900 text-center">
+            {isLogin ? 'Login to Your Account' : 'Create Your Account'}
           </h2>
           
           <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
             <div>
               <Input
                 type="text"
-                placeholder="Your name..."
+                placeholder="Enter your explorer name"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 disabled={loading}
-                className="text-center text-sm sm:text-base py-4 sm:py-6 border-2 border-amber-300"
+                className="text-center text-sm sm:text-base py-3 sm:py-4 border-2 border-slate-200 rounded-lg focus:border-yellow-500 focus:outline-none transition-colors"
                 maxLength={20}
                 autoComplete="off"
               />
-              <p className="text-xs text-gray-500 mt-1">{username.length}/20 characters</p>
+              <p className="text-xs text-slate-500 mt-2 text-center">{username.length}/20 characters</p>
             </div>
 
             {error && (
-              <div className="bg-red-50 border border-red-200 rounded p-2 sm:p-3">
-                <p className="text-red-600 text-xs sm:text-sm font-semibold">{error}</p>
+              <div className="bg-red-50 border border-red-200 rounded-lg p-3 sm:p-4">
+                <p className="text-red-700 text-xs sm:text-sm font-semibold">{error}</p>
               </div>
             )}
 
             <Button
               type="submit"
               disabled={loading}
-              className="w-full text-base sm:text-lg py-4 sm:py-6 bg-amber-600 hover:bg-amber-700 text-white font-semibold"
+              className="w-full text-base sm:text-lg py-3 sm:py-4 bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white font-bold rounded-lg shadow-lg transition-all hover:shadow-xl disabled:opacity-50"
               size="lg"
             >
-              {loading ? 'Loading...' : isLogin ? 'Login' : 'Create Account'}
+              {loading ? 'Starting adventure...' : isLogin ? 'Login' : 'Create Account'}
             </Button>
           </form>
 
-          <div className="pt-2 sm:pt-4 border-t border-gray-200 text-center">
+          <div className="pt-3 sm:pt-4 border-t border-slate-200 text-center">
             <button
               type="button"
               onClick={() => {
                 setIsLogin(!isLogin)
                 setError('')
               }}
-              className="text-xs sm:text-sm text-amber-700 hover:text-amber-900 font-semibold"
+              className="text-xs sm:text-sm text-blue-600 hover:text-blue-800 font-semibold transition-colors"
             >
-              {isLogin ? 'Create new account' : 'Already have an account?'}
+              {isLogin ? 'Create new account' : 'Already have an account? Login here'}
             </button>
           </div>
 
-          <p className="text-xs text-amber-700 text-center pt-2">
-            Progress saved to cloud!
+          <p className="text-xs text-slate-600 text-center pt-2 bg-blue-50 rounded-lg py-2">
+            Your progress is saved to the cloud
           </p>
         </div>
       </div>

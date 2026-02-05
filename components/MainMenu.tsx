@@ -23,24 +23,24 @@ export function MainMenu({ onStartGame, soundEnabled, onToggleSound, username, u
   const [showProgress, setShowProgress] = useState(false)
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-sky-300 via-sky-200 to-yellow-100 flex items-center justify-center p-2 sm:p-4 overflow-x-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-slate-50 to-purple-50 flex items-center justify-center p-2 sm:p-4 overflow-x-hidden">
       <div className="text-center space-y-4 sm:space-y-8 max-w-2xl w-full">
         {/* Title */}
-        <div className="space-y-1 sm:space-y-2">
-          <h1 className="text-3xl sm:text-6xl font-bold text-amber-900 drop-shadow-lg">
+        <div className="space-y-1 sm:space-y-3">
+          <h1 className="text-4xl sm:text-7xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-500 via-orange-500 to-amber-600">
             Treasure Quest
           </h1>
-          <p className="text-sm sm:text-xl text-amber-800">An adventure awaits!</p>
+          <p className="text-base sm:text-xl text-slate-600 font-medium">An epic adventure awaits!</p>
         </div>
 
         {/* Game Info */}
-        <div className="bg-white/80 rounded-lg p-4 sm:p-6 shadow-lg space-y-2 sm:space-y-3 text-center">
-          <h2 className="text-lg sm:text-2xl font-bold text-amber-900">Welcome, {username}!</h2>
-          <p className="text-xs sm:text-base text-amber-800 line-clamp-3">
-            Explore mystical lands, collect gems, and reach the exit safely.
+        <div className="bg-white rounded-2xl p-6 sm:p-8 shadow-xl border border-slate-100 space-y-3 sm:space-y-4 text-center backdrop-blur-sm">
+          <h2 className="text-xl sm:text-3xl font-bold text-slate-900">Welcome back, {username}!</h2>
+          <p className="text-sm sm:text-base text-slate-700 leading-relaxed">
+            Explore mystical lands, collect shimmering gems, and reach the exit safely.
           </p>
-          <p className="text-xs text-amber-700">
-            Watch out for hazards! Use your 3 lives wisely.
+          <p className="text-xs sm:text-sm text-slate-600 bg-blue-50 rounded-lg py-2 px-3">
+            Stay alert for hazards ahead! You have 3 lives to complete each level.
           </p>
         </div>
 
@@ -49,15 +49,15 @@ export function MainMenu({ onStartGame, soundEnabled, onToggleSound, username, u
           <div className="space-y-2 sm:space-y-3 flex flex-col">
             <Button
               onClick={() => onStartGame(1)}
-              className="text-sm sm:text-lg py-4 sm:py-6 bg-amber-600 hover:bg-amber-700 text-white font-semibold"
+              className="text-sm sm:text-lg py-4 sm:py-6 bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white font-bold shadow-lg rounded-xl transition-all hover:shadow-xl"
               size="lg"
             >
-              Start Game
+              Play Now
             </Button>
 
             <Button
               onClick={() => setShowLevelSelect(true)}
-              className="text-sm sm:text-lg py-4 sm:py-6 bg-blue-600 hover:bg-blue-700 text-white font-semibold"
+              className="text-sm sm:text-lg py-4 sm:py-6 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white font-bold shadow-lg rounded-xl transition-all hover:shadow-xl"
               variant="default"
               size="lg"
             >
@@ -67,7 +67,7 @@ export function MainMenu({ onStartGame, soundEnabled, onToggleSound, username, u
             {userId && (
               <Button
                 onClick={() => setShowProgress(true)}
-                className="text-sm sm:text-lg py-4 sm:py-6 bg-purple-600 hover:bg-purple-700 text-white font-semibold"
+                className="text-sm sm:text-lg py-4 sm:py-6 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold shadow-lg rounded-xl transition-all hover:shadow-xl"
                 variant="default"
                 size="lg"
               >
@@ -77,35 +77,36 @@ export function MainMenu({ onStartGame, soundEnabled, onToggleSound, username, u
 
             <Button
               onClick={onToggleSound}
-              className="text-sm sm:text-lg py-4 sm:py-6 bg-green-600 hover:bg-green-700 text-white font-semibold"
+              className="text-sm sm:text-lg py-4 sm:py-6 bg-gradient-to-r from-slate-600 to-slate-700 hover:from-slate-700 hover:to-slate-800 text-white font-bold shadow-lg rounded-xl transition-all hover:shadow-xl"
               variant="default"
               size="lg"
             >
-              {soundEnabled ? 'Sound On' : 'Sound Off'}
+              {soundEnabled ? '🔊 Sound On' : '🔇 Sound Off'}
             </Button>
           </div>
         ) : (
-          <div className="space-y-3 sm:space-y-4">
-            <h3 className="text-lg sm:text-2xl font-bold text-amber-900">Select Level</h3>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
+          <div className="space-y-4 sm:space-y-6">
+            <h3 className="text-2xl sm:text-3xl font-bold text-slate-900">Select Your Level</h3>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3 bg-white rounded-2xl p-4 sm:p-6 shadow-lg border border-slate-100">
               {LEVELS.map((level) => (
                 <Button
                   key={level.id}
                   onClick={() => onStartGame(level.id)}
-                  className="text-lg py-6 bg-purple-600 hover:bg-purple-700 text-white"
+                  className="text-xs sm:text-base py-3 sm:py-4 bg-gradient-to-br from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold rounded-lg shadow-md transition-all hover:shadow-lg"
                   size="lg"
                 >
-                  {level.id}. {level.name}
+                  <span className="text-lg sm:text-xl">{level.id}.</span> {level.name}
                 </Button>
               ))}
             </div>
 
             <Button
               onClick={() => setShowLevelSelect(false)}
-              className="text-lg py-4 bg-gray-600 hover:bg-gray-700 text-white w-full"
+              className="text-sm sm:text-lg py-4 sm:py-6 bg-gradient-to-r from-slate-500 to-slate-600 hover:from-slate-600 hover:to-slate-700 text-white font-bold rounded-xl shadow-lg transition-all hover:shadow-xl w-full"
               variant="default"
+              size="lg"
             >
-              ← Back
+              Back to Menu
             </Button>
           </div>
         )}
