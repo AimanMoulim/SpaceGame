@@ -21,9 +21,11 @@ export function GameScreen() {
   const [currentLevelId, setCurrentLevelId] = useState(1)
   const [soundEnabled, setSoundEnabled] = useState(true)
   const [levelStats, setLevelStats] = useState({ gems: 0, lives: 3 })
+  const [isHydrated, setIsHydrated] = useState(false)
 
-  // Load progress from localStorage
+  // Load progress from localStorage after hydration
   useEffect(() => {
+    setIsHydrated(true)
     const saved = localStorage.getItem('treasureGameProgress')
     if (saved) {
       try {
@@ -38,6 +40,7 @@ export function GameScreen() {
 
   // Save progress to localStorage
   useEffect(() => {
+    if (!isHydrated) return
     localStorage.setItem(
       'treasureGameProgress',
       JSON.stringify({
@@ -46,7 +49,7 @@ export function GameScreen() {
         timestamp: Date.now(),
       })
     )
-  }, [currentLevelId, soundEnabled])
+  }, [currentLevelId, soundEnabled, isHydrated])
 
   const handleStartGame = (levelId: number) => {
     const level = getLevelById(levelId)
@@ -88,6 +91,17 @@ export function GameScreen() {
 
   const handleToggleSound = () => {
     setSoundEnabled(!soundEnabled)
+  }
+
+  // Don't render until hydrated to prevent mismatch
+  if (!isHydrated) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-sky-300 via-sky-200 to-yellow-100 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-amber-900 text-lg">Loading...</p>
+        </div>
+      </div>
+    )
   }
 
   return (
