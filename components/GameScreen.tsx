@@ -160,6 +160,7 @@ export function GameScreen() {
           soundEnabled={soundEnabled}
           onToggleSound={handleToggleSound}
           username={username}
+          userId={userId}
         />
       )}
 

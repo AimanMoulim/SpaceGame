@@ -8,16 +8,19 @@
 import { useState } from 'react'
 import { LEVELS } from '@/lib/levels'
 import { Button } from '@/components/ui/button'
+import { PlayerProgress } from './PlayerProgress'
 
 interface MainMenuProps {
   onStartGame: (levelId: number) => void
   soundEnabled: boolean
   onToggleSound: () => void
   username?: string | null
+  userId?: string | null
 }
 
-export function MainMenu({ onStartGame, soundEnabled, onToggleSound, username }: MainMenuProps) {
+export function MainMenu({ onStartGame, soundEnabled, onToggleSound, username, userId }: MainMenuProps) {
   const [showLevelSelect, setShowLevelSelect] = useState(false)
+  const [showProgress, setShowProgress] = useState(false)
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-sky-300 via-sky-200 to-yellow-100 flex items-center justify-center p-2 sm:p-4 overflow-x-hidden">
@@ -53,13 +56,24 @@ export function MainMenu({ onStartGame, soundEnabled, onToggleSound, username }:
             </Button>
 
             <Button
-              onClick={() => setShowLevelSelect(false)}
-              className="text-sm sm:text-lg py-4 sm:py-6 bg-gray-600 hover:bg-gray-700 text-white font-semibold"
+              onClick={() => setShowLevelSelect(true)}
+              className="text-sm sm:text-lg py-4 sm:py-6 bg-blue-600 hover:bg-blue-700 text-white font-semibold"
               variant="default"
               size="lg"
             >
-              Back
+              Level Select
             </Button>
+
+            {userId && (
+              <Button
+                onClick={() => setShowProgress(true)}
+                className="text-sm sm:text-lg py-4 sm:py-6 bg-purple-600 hover:bg-purple-700 text-white font-semibold"
+                variant="default"
+                size="lg"
+              >
+                My Progress
+              </Button>
+            )}
 
             <Button
               onClick={onToggleSound}
@@ -97,10 +111,16 @@ export function MainMenu({ onStartGame, soundEnabled, onToggleSound, username }:
         )}
 
         {/* Footer */}
-        <p className="text-sm text-amber-700 pt-4">
-          Built with ❤️ for all ages | Halal • Non-violent • Family-friendly
-        </p>
+        <p className="text-sm text-amber-700 pt-4"></p>
       </div>
+
+      {showProgress && userId && username && (
+        <PlayerProgress
+          userId={userId}
+          username={username}
+          onClose={() => setShowProgress(false)}
+        />
+      )}
     </div>
   )
 }
