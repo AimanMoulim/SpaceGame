@@ -58,25 +58,21 @@ export function PlatformDashboard({ userId, username }: PlatformDashboardProps) 
           label="Games Played"
           value={stats?.totalGamesPlayed || 0}
           icon="🎮"
-          change={12}
         />
         <StatCard
           label="Total Gems"
           value={stats?.totalGemsCollected || 0}
           icon="💎"
-          change={245}
         />
         <StatCard
           label="Highest Level"
           value={stats?.highestLevel || 0}
           icon="🏔️"
-          change={3}
         />
         <StatCard
           label="Play Time (hrs)"
           value={Math.round((stats?.totalPlayTime || 0) / 3600)}
           icon="⏱️"
-          change={12}
         />
       </div>
 
@@ -133,15 +129,13 @@ interface StatCardProps {
   label: string
   value: number
   icon: string
-  change: number
 }
 
-function StatCard({ label, value, icon, change }: StatCardProps) {
+function StatCard({ label, value, icon }: StatCardProps) {
   return (
     <div className="bg-slate-900/50 border border-slate-700/50 rounded-xl p-4 backdrop-blur-sm hover:border-slate-600 transition-colors">
       <div className="flex items-start justify-between mb-3">
         <span className="text-2xl">{icon}</span>
-        <span className="text-xs text-green-400 font-semibold">+{change}</span>
       </div>
       <p className="text-sm text-slate-400 mb-1">{label}</p>
       <p className="text-3xl font-bold text-white">{value}</p>

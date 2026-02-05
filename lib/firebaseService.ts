@@ -101,6 +101,24 @@ export async function initializeUserProfile(userId: string, username: string, pa
       createdAt: Date.now(),
       lastUpdated: Date.now()
     })
+
+    // Initialize player stats collection
+    const playerStatsRef = ref(database, `playerStats/${userId}`)
+    await set(playerStatsRef, {
+      userId,
+      username,
+      totalGamesPlayed: 0,
+      totalGemsCollected: 0,
+      totalPlayTime: 0,
+      highestLevel: 1,
+      averageScore: 0,
+      lastPlayed: Date.now(),
+      createdAt: Date.now(),
+      favoriteGame: 'treasure-quest',
+      achievements: [],
+      totalSessions: 0
+    })
+
     return true
   } catch (error) {
     console.error('Error initializing user profile:', error)

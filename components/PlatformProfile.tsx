@@ -11,6 +11,7 @@ interface PlatformProfileProps {
 export function PlatformProfile({ userId, username }: PlatformProfileProps) {
   const [profile, setProfile] = useState<any>(null)
   const [stats, setStats] = useState<any>(null)
+  const [rank, setRank] = useState(0)
   const [loading, setLoading] = useState(true)
   const [editMode, setEditMode] = useState(false)
   const [displayName, setDisplayName] = useState(username)
@@ -25,6 +26,7 @@ export function PlatformProfile({ userId, username }: PlatformProfileProps) {
       const data = await getPlayerProfile(userId)
       setProfile(data.profile)
       setStats(data.stats)
+      setRank(data.rank || 0)
     } catch (error) {
       console.error('Error loading profile:', error)
     } finally {
@@ -79,7 +81,7 @@ export function PlatformProfile({ userId, username }: PlatformProfileProps) {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <ProfileStatBox
           title="Rank"
-          value="#1"
+          value={rank > 0 ? `#${rank}` : 'N/A'}
           icon="🏆"
           description="Global leaderboard position"
         />

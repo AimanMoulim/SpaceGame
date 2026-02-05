@@ -67,7 +67,7 @@ export async function getPlayerStats(userId: string): Promise<PlayerStats | null
 // Record game session
 export async function recordGameSession(userId: string, session: GameSession) {
   try {
-    const sessionId = `${Date.now()}`
+    const sessionId = `${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
     const sessionRef = ref(database, `gameSessions/${userId}/${sessionId}`)
     await set(sessionRef, {
       ...session,
@@ -77,13 +77,20 @@ export async function recordGameSession(userId: string, session: GameSession) {
     // Update player stats
     const currentStats = await getPlayerStats(userId)
     if (currentStats) {
+      const newTotalGames = (currentStats.totalGamesPlayed || 0) + 1
+      const newTotalGems = (currentStats.totalGemsCollected || 0) + session.gemsCollected
+      const newTotalPlayTime = (currentStats.totalPlayTime || 0) + (session.duration || 0)
+      const newHighestLevel = Math.max(currentStats.highestLevel || 0, session.levelReached)
+      const newAverageScore = (currentStats.totalGamesPlayed * (currentStats.averageScore || 0) + session.score) / newTotalGames
+
       await updatePlayerStats(userId, {
-        totalGamesPlayed: (currentStats.totalGamesPlayed || 0) + 1,
-        totalGemsCollected: (currentStats.totalGemsCollected || 0) + session.gemsCollected,
-        totalPlayTime: (currentStats.totalPlayTime || 0) + (session.duration || 0),
-        highestLevel: Math.max(currentStats.highestLevel || 0, session.levelReached),
-        averageScore: ((currentStats.averageScore || 0) + session.score) / 2,
-        lastPlayed: Date.now()
+        totalGamesPlayed: newTotalGames,
+        totalGemsCollected: newTotalGems,
+        totalPlayTime: newTotalPlayTime,
+        highestLevel: newHighestLevel,
+        averageScore: newAverageScore,
+        lastPlayed: Date.now(),
+        totalSessions: (currentStats.totalSessions || 0) + 1
       })
     }
 
@@ -155,12 +162,23 @@ export async function getPlayerProfile(userId: string) {
       get(statsRef)
     ])
 
+    const stats = statsSnapshot.exists() ? statsSnapshot.val() : null
+    
+    // Calculate user's rank
+    let userRank = 0
+    if (stats) {
+      const leaderboard = await getGlobalLeaderboard(10000)
+      const rankEntry = leaderboard.find(entry => entry.userId === userId)
+      userRank = rankEntry?.rank || 0
+    }
+
     return {
       profile: playerSnapshot.exists() ? playerSnapshot.val() : null,
-      stats: statsSnapshot.exists() ? statsSnapshot.val() : null
+      stats: stats,
+      rank: userRank
     }
   } catch (error) {
     console.error('Error getting player profile:', error)
-    return { profile: null, stats: null }
+    return { profile: null, stats: null, rank: 0 }
   }
 }
