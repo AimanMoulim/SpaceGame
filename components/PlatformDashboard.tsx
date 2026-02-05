@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { PlayerStats, GameSession, getPlayerStats, getPlayerSessions } from '@/lib/platformService'
+import { LastGameSession } from './LastGameSession'
 
 interface PlatformDashboardProps {
   userId: string
@@ -75,6 +76,9 @@ export function PlatformDashboard({ userId, username }: PlatformDashboardProps) 
           icon="⏱️"
         />
       </div>
+
+      {/* Last Game Session */}
+      <LastGameSession userId={userId} />
 
       {/* Recent Sessions */}
       <div className="bg-slate-900/50 border border-slate-700/50 rounded-2xl p-6 backdrop-blur-sm">
