@@ -2,15 +2,13 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { GameScreenWrapper } from '@/components/GameScreenWrapper'
-import { saveGameSession } from '@/lib/platformService'
+import { GameScreenPC } from '@/components/GameScreenPC'
+import { GameScreenMobile } from '@/components/GameScreenMobile'
 
 export default function TreasureQuestPage() {
   const router = useRouter()
-  const [userId, setUserId] = useState<string | null>(null)
-  const [username, setUsername] = useState<string | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [sessionStartTime] = useState(Date.now())
+  const [isMobile, setIsMobile] = useState(false)
+  const [isHydrated, setIsHydrated] = useState(false)
 
   useEffect(() => {
     const savedProgress = localStorage.getItem('treasureGameProgress')
@@ -19,29 +17,15 @@ export default function TreasureQuestPage() {
       return
     }
 
-    try {
-      const data = JSON.parse(savedProgress)
-      setUserId(data.userId)
-      setUsername(data.username)
-    } catch (error) {
-      console.error('Error parsing user data:', error)
-      router.push('/')
-    } finally {
-      setLoading(false)
-    }
+    // Detect mobile
+    const userAgent = typeof navigator !== 'undefined' ? navigator.userAgent : ''
+    const isPhone = /iPhone|iPad|Android|webOS|BlackBerry|IEMobile|Opera Mini/i.test(userAgent)
+    const isSmallScreen = window.innerWidth < 768
+    setIsMobile(isPhone || isSmallScreen)
+    setIsHydrated(true)
   }, [router])
 
-  useEffect(() => {
-    return () => {
-      // Save game session when leaving
-      if (userId) {
-        const sessionDuration = Math.floor((Date.now() - sessionStartTime) / 1000)
-        saveGameSession(userId, 'treasure-quest', sessionDuration)
-      }
-    }
-  }, [userId, sessionStartTime])
-
-  if (loading || !userId || !username) {
+  if (!isHydrated) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-blue-400 to-green-200 flex items-center justify-center">
         <div className="text-center">
@@ -54,7 +38,7 @@ export default function TreasureQuestPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-400 to-green-200">
-      <GameScreenWrapper />
+      {isMobile ? <GameScreenMobile /> : <GameScreenPC />}
     </div>
   )
 }
