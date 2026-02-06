@@ -101,14 +101,6 @@ export function UsernameSetup({ onUsernameSet }: UsernameSetupProps) {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-slate-50 to-purple-50 flex items-center justify-center p-4">
       <div className="w-full max-w-sm space-y-4 sm:space-y-6">
-        {/* Title */}
-        <div className="text-center space-y-1 sm:space-y-3">
-          <h1 className="text-5xl sm:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-500 via-orange-500 to-amber-600">
-            Treasure Quest
-          </h1>
-          <p className="text-base sm:text-lg text-slate-600 font-medium">Begin your adventure</p>
-        </div>
-
         {/* Username Form */}
         <div className="bg-white rounded-2xl p-6 sm:p-8 shadow-xl space-y-4 border border-slate-100 backdrop-blur-sm">
           <h2 className="text-xl sm:text-2xl font-bold text-slate-900 text-center">

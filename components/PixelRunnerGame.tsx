@@ -29,6 +29,8 @@ export function PixelRunnerGame() {
   const [distance, setDistance] = useState(0)
   const [gameOver, setGameOver] = useState(false)
   const keysPressed = useRef<Record<string, boolean>>({})
+  const containerWidth = 800; // Declare containerWidth
+  const containerHeight = 600; // Declare containerHeight
 
   // Mobile controls
   const [showControls, setShowControls] = useState(true)
@@ -42,13 +44,29 @@ export function PixelRunnerGame() {
     const canvas = canvasRef.current
     if (!canvas) return
 
-    const containerWidth = Math.min(window.innerWidth - 32, 400)
-    const containerHeight = (containerWidth / 400) * 600
+    // Precise canvas sizing for both PC and mobile
+    const isMobile = window.innerWidth < 768
+    let canvasWidth: number
+    let canvasHeight: number
 
-    canvas.width = containerWidth
-    canvas.height = containerHeight
+    if (isMobile) {
+      // Samsung Android phone dimensions (portrait)
+      const maxMobileWidth = Math.min(window.innerWidth - 16, 360)
+      const maxMobileHeight = Math.min(window.innerHeight * 0.55, 540)
+      canvasWidth = maxMobileWidth
+      canvasHeight = maxMobileHeight
+    } else {
+      // Desktop dimensions - max 1800x1000
+      const maxDesktopWidth = Math.min(window.innerWidth - 48, 800)
+      const maxDesktopHeight = Math.min(window.innerHeight - 300, 600)
+      canvasWidth = maxDesktopWidth
+      canvasHeight = maxDesktopHeight
+    }
 
-    gameStateRef.current.playerX = containerWidth * 0.15
+    canvas.width = canvasWidth
+    canvas.height = canvasHeight
+
+    gameStateRef.current.playerX = canvasWidth * 0.15
     gameStateRef.current.playerY = 0
 
     const ctx = canvas.getContext('2d')
@@ -64,14 +82,14 @@ export function PixelRunnerGame() {
       game.playerY += game.playerVelY
 
       // Ground collision
-      if (game.playerY >= containerHeight - playerSize) {
-        game.playerY = containerHeight - playerSize
+      if (game.playerY >= canvasHeight - playerSize) {
+        game.playerY = canvasHeight - playerSize
         game.playerVelY = 0
       }
 
       // Keyboard controls
       if (keysPressed.current['Space'] || keysPressed.current['ArrowUp']) {
-        if (game.playerY === containerHeight - playerSize && game.gameRunning) {
+        if (game.playerY === canvasHeight - playerSize && game.gameRunning) {
           game.playerVelY = -12
         }
       }
@@ -91,8 +109,8 @@ export function PixelRunnerGame() {
       // Generate obstacles
       if (Math.random() < 0.02) {
         game.obstacles.push({
-          x: containerWidth,
-          width: containerWidth * 0.08
+          x: canvasWidth,
+          width: canvasWidth * 0.08
         })
       }
 
@@ -102,7 +120,7 @@ export function PixelRunnerGame() {
         if (
           game.playerX < obstacle.x + obstacle.width &&
           game.playerX + playerSize > obstacle.x &&
-          game.playerY + playerSize > containerHeight - obstacleHeight
+          game.playerY + playerSize > canvasHeight - obstacleHeight
         ) {
           game.gameRunning = false
           game.gameOver = true
@@ -112,11 +130,11 @@ export function PixelRunnerGame() {
 
       // Clear and draw
       ctx.fillStyle = '#1a1a2e'
-      ctx.fillRect(0, 0, containerWidth, containerHeight)
+      ctx.fillRect(0, 0, canvasWidth, canvasHeight)
 
       // Draw ground
       ctx.fillStyle = '#ff00ff'
-      ctx.fillRect(0, containerHeight - playerSize - 5, containerWidth, 5)
+      ctx.fillRect(0, canvasHeight - playerSize - 5, canvasWidth, 5)
 
       // Draw player (cyberpunk style)
       ctx.fillStyle = '#00ff88'
@@ -128,16 +146,16 @@ export function PixelRunnerGame() {
       // Draw obstacles
       ctx.fillStyle = '#ff0055'
       for (const obstacle of game.obstacles) {
-        ctx.fillRect(obstacle.x, containerHeight - obstacleHeight, obstacle.width, obstacleHeight)
+        ctx.fillRect(obstacle.x, canvasHeight - obstacleHeight, obstacle.width, obstacleHeight)
         ctx.strokeStyle = '#ff00ff'
         ctx.lineWidth = 2
-        ctx.strokeRect(obstacle.x - 1, containerHeight - obstacleHeight - 1, obstacle.width + 2, obstacleHeight + 2)
+        ctx.strokeRect(obstacle.x - 1, canvasHeight - obstacleHeight - 1, obstacle.width + 2, obstacleHeight + 2)
       }
 
       // Draw score
       ctx.fillStyle = '#00ff88'
-      ctx.font = `${containerHeight * 0.06}px monospace`
-      ctx.fillText(`Score: ${game.score}`, containerWidth * 0.05, containerHeight * 0.1)
+      ctx.font = `${canvasHeight * 0.06}px monospace`
+      ctx.fillText(`Score: ${game.score}`, canvasWidth * 0.05, canvasHeight * 0.1)
 
       if (game.gameRunning) {
         requestAnimationFrame(gameLoop)

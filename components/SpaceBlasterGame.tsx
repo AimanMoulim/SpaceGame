@@ -44,31 +44,51 @@ export function SpaceBlasterGame({ onSessionData }: any) {
     const canvas = canvasRef.current
     if (!canvas) return
 
-    // Responsive canvas sizing
-    const containerWidth = Math.min(window.innerWidth - 32, 400)
-    const aspectRatio = 600 / 400
-    const containerHeight = containerWidth * aspectRatio
+    // Precise canvas sizing for both PC and mobile
+    const isMobile = window.innerWidth < 768
+    let canvasWidth: number
+    let canvasHeight: number
 
-    canvas.width = containerWidth
-    canvas.height = containerHeight
+    if (isMobile) {
+      // Samsung Android phone dimensions (portrait)
+      // Standard Android width: 360-412px, height: 640-800px
+      const maxMobileWidth = Math.min(window.innerWidth - 16, 360)
+      const maxMobileHeight = Math.min(window.innerHeight * 0.55, 540)
+      canvasWidth = maxMobileWidth
+      canvasHeight = maxMobileHeight
+    } else {
+      // Desktop dimensions - max 1800x1000
+      const maxDesktopWidth = Math.min(window.innerWidth - 48, 800)
+      const maxDesktopHeight = Math.min(window.innerHeight - 300, 600)
+      canvasWidth = maxDesktopWidth
+      canvasHeight = maxDesktopHeight
+    }
+
+    canvas.width = canvasWidth
+    canvas.height = canvasHeight
     
-    // Scale game state based on canvas size
-    gameStateRef.current.playerX = (containerWidth / 400) * 175
-    gameStateRef.current.playerY = (containerHeight / 600) * 550
+    // Scale game state based on actual canvas size
+    const scaleX = canvasWidth / 400
+    const scaleY = canvasHeight / 600
+    gameStateRef.current.playerX = 175 * scaleX
+    gameStateRef.current.playerY = 550 * scaleY
 
     const ctx = canvas.getContext('2d')
     if (!ctx) return
 
     const handleKeyDown = (e: KeyboardEvent) => {
+      const playerWidth = 30 * (canvasWidth / 400)
+      const maxX = canvasWidth - playerWidth
+      
       if (e.key === 'ArrowLeft' && gameStateRef.current.playerX > 0) {
-        gameStateRef.current.playerX -= 10
-      } else if (e.key === 'ArrowRight' && gameStateRef.current.playerX < 350) {
-        gameStateRef.current.playerX += 10
+        gameStateRef.current.playerX = Math.max(0, gameStateRef.current.playerX - 10)
+      } else if (e.key === 'ArrowRight' && gameStateRef.current.playerX < maxX) {
+        gameStateRef.current.playerX = Math.min(maxX, gameStateRef.current.playerX + 10)
       } else if (e.key === ' ') {
         e.preventDefault()
         gameStateRef.current.bullets.push({
           id: Date.now(),
-          x: gameStateRef.current.playerX + 15,
+          x: gameStateRef.current.playerX + (15 * (canvasWidth / 400)),
           y: gameStateRef.current.playerY
         })
       }
@@ -136,26 +156,29 @@ export function SpaceBlasterGame({ onSessionData }: any) {
       }
 
       ctx.fillStyle = '#000814'
-      ctx.fillRect(0, 0, 400, 600)
+      ctx.fillRect(0, 0, canvasWidth, canvasHeight)
+
+      const scaleX = canvasWidth / 400
+      const scaleY = canvasHeight / 600
 
       gameStateRef.current.enemies.forEach(enemy => {
         ctx.fillStyle = '#FF006E'
-        ctx.fillRect(enemy.x, enemy.y, enemy.width, enemy.height)
+        ctx.fillRect(enemy.x * scaleX, enemy.y * scaleY, enemy.width * scaleX, enemy.height * scaleY)
       })
 
       gameStateRef.current.bullets.forEach(bullet => {
         ctx.fillStyle = '#00D9FF'
-        ctx.fillRect(bullet.x, bullet.y, 4, 10)
+        ctx.fillRect(bullet.x * scaleX, bullet.y * scaleY, 4 * scaleX, 10 * scaleY)
       })
 
       ctx.fillStyle = '#00D9FF'
-      ctx.fillRect(gameStateRef.current.playerX, gameStateRef.current.playerY, 30, 30)
+      ctx.fillRect(gameStateRef.current.playerX, gameStateRef.current.playerY, 30 * scaleX, 30 * scaleY)
 
       ctx.fillStyle = '#FFFFFF'
-      ctx.font = '14px Arial'
+      ctx.font = `${14 * scaleX}px Arial`
       ctx.fillText(`Score: ${gameStateRef.current.score}`, 10, 20)
       ctx.fillText(`Lives: ${gameStateRef.current.lives}`, 10, 40)
-      ctx.fillText(`Wave: ${gameStateRef.current.wave}`, 320, 20)
+      ctx.fillText(`Wave: ${gameStateRef.current.wave}`, canvasWidth - 80, 20)
     }, 30)
 
     return () => {
