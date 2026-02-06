@@ -34,6 +34,68 @@ export interface LeaderboardEntry {
   lastPlayed: number
 }
 
+// Get count of players who have played a specific game
+export async function getGamePlayerCount(gameId: string): Promise<number> {
+  try {
+    const sessionsRef = ref(database, 'gameSessions')
+    const snapshot = await get(sessionsRef)
+    
+    if (!snapshot.exists()) return 0
+    
+    const allSessions = snapshot.val()
+    const playerIds = new Set<string>()
+    
+    // Iterate through all users and their sessions
+    for (const userId in allSessions) {
+      const userSessions = allSessions[userId]
+      for (const sessionId in userSessions) {
+        const session = userSessions[sessionId]
+        if (session.gameId === gameId) {
+          playerIds.add(userId)
+          break // Only count each user once per game
+        }
+      }
+    }
+    
+    return playerIds.size
+  } catch (error) {
+    console.error(`Error getting player count for game ${gameId}:`, error)
+    return 0
+  }
+}
+
+// Get average rating for a game (based on average score)
+export async function getGameAverageRating(gameId: string): Promise<number> {
+  try {
+    const sessionsRef = ref(database, 'gameSessions')
+    const snapshot = await get(sessionsRef)
+    
+    if (!snapshot.exists()) return 0
+    
+    const allSessions = snapshot.val()
+    const scores: number[] = []
+    
+    for (const userId in allSessions) {
+      const userSessions = allSessions[userId]
+      for (const sessionId in userSessions) {
+        const session = userSessions[sessionId]
+        if (session.gameId === gameId && session.score) {
+          scores.push(session.score)
+        }
+      }
+    }
+    
+    if (scores.length === 0) return 0
+    
+    const average = scores.reduce((a, b) => a + b, 0) / scores.length
+    // Convert to 0-5 scale
+    return Math.min(5, (average / 100) * 5)
+  } catch (error) {
+    console.error(`Error getting rating for game ${gameId}:`, error)
+    return 0
+  }
+}
+
 // Initialize or update player statistics
 export async function updatePlayerStats(userId: string, stats: Partial<PlayerStats>) {
   try {

@@ -39,8 +39,18 @@ export function SpaceBlasterGame({ onSessionData }: any) {
     const canvas = canvasRef.current
     if (!canvas) return
 
-    canvas.width = 400
-    canvas.height = 600
+    // Responsive canvas sizing
+    const containerWidth = Math.min(window.innerWidth - 32, 400)
+    const aspectRatio = 600 / 400
+    const containerHeight = containerWidth * aspectRatio
+
+    canvas.width = containerWidth
+    canvas.height = containerHeight
+    
+    // Scale game state based on canvas size
+    gameStateRef.current.playerX = (containerWidth / 400) * 175
+    gameStateRef.current.playerY = (containerHeight / 600) * 550
+
     const ctx = canvas.getContext('2d')
     if (!ctx) return
 
@@ -188,29 +198,29 @@ export function SpaceBlasterGame({ onSessionData }: any) {
   return (
     <div
       ref={gameRef}
-      className="w-full h-screen bg-gradient-to-b from-slate-900 to-black flex flex-col items-center justify-center p-4"
+      className="w-full h-screen bg-gradient-to-b from-slate-900 to-black flex flex-col items-center justify-center p-2 sm:p-4 overflow-hidden"
     >
-      <h1 className="text-4xl font-bold text-cyan-400 mb-4">Space Blaster</h1>
+      <h1 className="text-3xl sm:text-4xl font-bold text-cyan-400 mb-3 sm:mb-4">Space Blaster</h1>
 
-      <div className="border-2 border-cyan-400 rounded-lg overflow-hidden mb-4">
-        <canvas ref={canvasRef} className="bg-black" />
+      <div className="w-full max-w-full sm:max-w-md border-2 border-cyan-400 rounded-lg overflow-hidden mb-3 sm:mb-4 flex-shrink-0">
+        <canvas ref={canvasRef} className="bg-black w-full h-auto display-block" />
       </div>
 
-      <div className="text-white text-center">
-        <p className="text-lg mb-2">Use Arrow Keys to move • Space to shoot</p>
+      <div className="text-white text-center text-xs sm:text-base flex-shrink-0">
+        <p className="mb-2">Arrow Keys to move • Space to shoot</p>
 
         {gameOver && (
-          <div className="bg-black/70 backdrop-blur-sm rounded-lg p-8 mt-4 max-w-md">
-            <h2 className="text-3xl font-bold text-red-500 mb-4">Game Over!</h2>
-            <p className="text-xl mb-2">
+          <div className="bg-black/70 backdrop-blur-sm rounded-lg p-4 sm:p-8 mt-2 sm:mt-4 max-w-sm">
+            <h2 className="text-2xl sm:text-3xl font-bold text-red-500 mb-3 sm:mb-4">Game Over!</h2>
+            <p className="text-lg sm:text-xl mb-1 sm:mb-2">
               Final Score: <span className="text-cyan-400 font-bold">{score}</span>
             </p>
-            <p className="text-xl mb-6">
+            <p className="text-lg sm:text-xl mb-4 sm:mb-6">
               Waves Survived: <span className="text-yellow-400 font-bold">{wave}</span>
             </p>
             <button
               onClick={resetGame}
-              className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-bold rounded-lg hover:from-cyan-600 hover:to-blue-600 transition-all"
+              className="px-6 py-2 sm:py-3 bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-bold rounded-lg hover:from-cyan-600 hover:to-blue-600 transition-all text-sm sm:text-base"
             >
               Play Again
             </button>

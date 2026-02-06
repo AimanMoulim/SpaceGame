@@ -88,32 +88,32 @@ export function CrystalMatchGame({ onSessionData }: any) {
   return (
     <div
       ref={gameRef}
-      className="w-full h-screen bg-gradient-to-br from-purple-900 via-indigo-900 to-blue-900 flex flex-col items-center justify-center p-4"
+      className="w-full h-screen bg-gradient-to-br from-purple-900 via-indigo-900 to-blue-900 flex flex-col items-center justify-center p-2 sm:p-4 overflow-hidden"
     >
-      <div className="max-w-2xl w-full">
-        <h1 className="text-4xl font-bold text-center text-white mb-2">Crystal Match</h1>
+      <div className="w-full max-w-md flex flex-col items-center justify-center h-full">
+        <h1 className="text-3xl sm:text-4xl font-bold text-center text-white mb-4">Crystal Match</h1>
 
-        <div className="flex justify-between items-center mb-8 text-white">
-          <div className="text-lg">
+        <div className="flex justify-between items-center w-full mb-6 text-white text-sm sm:text-base">
+          <div>
             Moves: <span className="font-bold text-cyan-400">{moves}</span>
           </div>
-          <div className="text-lg">
+          <div>
             Score: <span className="font-bold text-yellow-400">{score}</span>
           </div>
           <button
             onClick={initializeGame}
-            className="px-4 py-2 bg-gradient-to-r from-pink-500 to-red-500 rounded-lg hover:from-pink-600 hover:to-red-600 transition-all font-semibold"
+            className="px-3 py-1 sm:px-4 sm:py-2 bg-gradient-to-r from-pink-500 to-red-500 rounded-lg hover:from-pink-600 hover:to-red-600 transition-all font-semibold text-sm"
           >
-            New Game
+            New
           </button>
         </div>
 
-        <div className="grid grid-cols-4 gap-3 mb-8">
+        <div className="grid grid-cols-4 gap-2 sm:gap-3 mb-6 w-full">
           {cards.map(card => (
             <button
               key={card.id}
               onClick={() => handleCardClick(card.id)}
-              className={`aspect-square rounded-lg font-bold text-3xl transition-all duration-300 transform ${
+              className={`aspect-square rounded-lg font-bold text-xl sm:text-3xl transition-all duration-300 transform ${
                 flipped.includes(card.id) || matched.includes(card.id)
                   ? 'bg-gradient-to-br from-cyan-400 to-blue-500 scale-95'
                   : 'bg-gradient-to-br from-purple-600 to-pink-600 hover:scale-110'
@@ -125,17 +125,17 @@ export function CrystalMatchGame({ onSessionData }: any) {
         </div>
 
         {gameOver && (
-          <div className="text-center bg-black/50 backdrop-blur-sm rounded-lg p-8">
-            <h2 className="text-3xl font-bold text-yellow-400 mb-4">Level Complete!</h2>
-            <p className="text-white text-xl mb-4">
+          <div className="text-center bg-black/50 backdrop-blur-sm rounded-lg p-6 w-full">
+            <h2 className="text-2xl sm:text-3xl font-bold text-yellow-400 mb-3">Level Complete!</h2>
+            <p className="text-white text-lg sm:text-xl mb-2">
               Score: <span className="text-yellow-400 font-bold">{score}</span> points
             </p>
-            <p className="text-white text-lg mb-6">
+            <p className="text-white text-base sm:text-lg mb-4">
               Completed in <span className="text-cyan-400 font-bold">{moves}</span> moves
             </p>
             <button
               onClick={initializeGame}
-              className="px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-500 text-white font-bold rounded-lg hover:from-green-600 hover:to-emerald-600 transition-all"
+              className="px-6 py-2 sm:py-3 bg-gradient-to-r from-green-500 to-emerald-500 text-white font-bold rounded-lg hover:from-green-600 hover:to-emerald-600 transition-all text-sm sm:text-base"
             >
               Play Again
             </button>

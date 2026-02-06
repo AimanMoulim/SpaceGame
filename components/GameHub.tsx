@@ -1,7 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { getGamePlayerCount, getGameAverageRating } from '@/lib/platformService'
 
 interface Game {
   id: string
@@ -18,15 +19,13 @@ interface GameHubProps {
   userId: string
 }
 
-const AVAILABLE_GAMES: Game[] = [
+const GAME_BASE: Omit<Game, 'players' | 'rating'>[] = [
   {
     id: 'treasure-quest',
     title: 'Treasure Quest',
     description: 'An epic platformer adventure through magical lands. Collect gems, avoid hazards, and reach the exit to complete levels.',
     icon: '🏜️',
     status: 'available',
-    players: 15420,
-    rating: 4.8,
     image: '✨'
   },
   {
@@ -34,33 +33,54 @@ const AVAILABLE_GAMES: Game[] = [
     title: 'Crystal Match',
     description: 'A beautiful memory matching puzzle game. Flip cards to find pairs and master the crystal kingdom. Perfect for quick gaming sessions!',
     icon: '💎',
-    status: 'available',
-    players: 8340,
-    rating: 4.6
+    status: 'available'
   },
   {
     id: 'space-blaster',
     title: 'Space Blaster',
     description: 'Defend Earth from alien invaders! Control your spaceship with arrow keys and blast enemies. Survive increasing waves for high scores.',
     icon: '🚀',
-    status: 'available',
-    players: 12150,
-    rating: 4.7
+    status: 'available'
   },
   {
     id: 'pixel-runner',
     title: 'Pixel Runner',
     description: 'Run through a colorful pixelated world! Jump over obstacles and set distance records. How far can you run?',
     icon: '🏃',
-    status: 'available',
-    players: 9870,
-    rating: 4.5
+    status: 'available'
   }
 ]
 
 export function GameHub({ userId }: GameHubProps) {
+  const [games, setGames] = useState<Game[]>([])
   const [selectedGame, setSelectedGame] = useState<Game | null>(null)
+  const [loading, setLoading] = useState(true)
   const router = useRouter()
+
+  useEffect(() => {
+    loadGameStats()
+  }, [])
+
+  const loadGameStats = async () => {
+    setLoading(true)
+    try {
+      const gamesWithStats = await Promise.all(
+        GAME_BASE.map(async (game) => ({
+          ...game,
+          players: await getGamePlayerCount(game.id),
+          rating: await getGameAverageRating(game.id)
+        }))
+      )
+      setGames(gamesWithStats)
+      console.log('[v0] Loaded game stats:', gamesWithStats)
+    } catch (error) {
+      console.error('[v0] Error loading game stats:', error)
+      // Fallback to default values if error
+      setGames(GAME_BASE.map(g => ({ ...g, players: 0, rating: 0 })))
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const handlePlayGame = (gameId: string) => {
     const gameRoutes: Record<string, string> = {
@@ -88,8 +108,16 @@ export function GameHub({ userId }: GameHubProps) {
         </div>
       </div>
 
+      {/* Loading State */}
+      {loading && (
+        <div className="text-center py-12">
+          <div className="text-4xl animate-spin mb-4">⚙️</div>
+          <p className="text-slate-400">Loading games...</p>
+        </div>
+      )}
+
       {/* Featured Game */}
-      {AVAILABLE_GAMES.find(g => g.status === 'available') && (
+      {!loading && games.find(g => g.status === 'available') && (
         <div className="bg-gradient-to-r from-yellow-500/20 via-orange-500/20 to-red-500/20 border border-yellow-500/30 rounded-2xl p-8 backdrop-blur-sm overflow-hidden relative">
           <div className="absolute top-0 right-0 text-9xl opacity-10">🎮</div>
           <div className="relative z-10">
@@ -121,10 +149,9 @@ export function GameHub({ userId }: GameHubProps) {
       )}
 
       {/* Games Grid */}
-      <div>
-        <h2 className="text-2xl font-bold mb-6">All Games</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {AVAILABLE_GAMES.map(game => (
+      {!loading && (
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        {games.map(game => (
             <div
               key={game.id}
               onClick={() => setSelectedGame(game)}
@@ -156,53 +183,8 @@ export function GameHub({ userId }: GameHubProps) {
                 </div>
               )}
             </div>
-          ))}
-        </div>
+        ))}
       </div>
-
-      {/* Game Details Modal */}
-      {selectedGame && (
-        <div className="fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
-          <div className="bg-slate-900 border border-slate-700 rounded-2xl max-w-md w-full p-8">
-            <div className="text-6xl mb-4 text-center">{selectedGame.icon}</div>
-            <h3 className="text-2xl font-bold mb-3 text-center">{selectedGame.title}</h3>
-            <p className="text-slate-400 mb-6 text-center">{selectedGame.description}</p>
-
-            {selectedGame.status === 'available' && (
-              <div className="flex items-center justify-between mb-6 px-4 py-3 bg-slate-800 rounded-lg">
-                <span className="text-slate-400">{selectedGame.players.toLocaleString()} active players</span>
-                <span className="text-yellow-400 font-bold">★ {selectedGame.rating}</span>
-              </div>
-            )}
-
-            <div className="flex gap-4">
-              <button
-                onClick={() => setSelectedGame(null)}
-                className="flex-1 px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-lg font-semibold transition-colors"
-              >
-                Close
-              </button>
-              {selectedGame.status === 'available' ? (
-                <button
-                  onClick={() => {
-                    handlePlayGame(selectedGame.id)
-                    setSelectedGame(null)
-                  }}
-                  className="flex-1 px-4 py-2 bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white rounded-lg font-semibold transition-all"
-                >
-                  Play
-                </button>
-              ) : (
-                <button
-                  disabled
-                  className="flex-1 px-4 py-2 bg-slate-700 text-slate-400 rounded-lg font-semibold cursor-not-allowed"
-                >
-                  Coming Soon
-                </button>
-              )}
-            </div>
-          </div>
-        </div>
       )}
     </div>
   )
