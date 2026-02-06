@@ -30,31 +30,31 @@ const AVAILABLE_GAMES: Game[] = [
     image: '✨'
   },
   {
-    id: 'sky-runner',
-    title: 'Sky Runner',
-    description: 'Fast-paced endless runner in the clouds. Jump, dodge, and collect power-ups. Coming soon!',
-    icon: '☁️',
-    status: 'coming-soon',
-    players: 0,
-    rating: 0
+    id: 'crystal-match',
+    title: 'Crystal Match',
+    description: 'A beautiful memory matching puzzle game. Flip cards to find pairs and master the crystal kingdom. Perfect for quick gaming sessions!',
+    icon: '💎',
+    status: 'available',
+    players: 8340,
+    rating: 4.6
   },
   {
-    id: 'puzzle-master',
-    title: 'Puzzle Master',
-    description: 'Test your brain with challenging puzzles. Solve unique challenges and beat the clock. Coming soon!',
-    icon: '🧩',
-    status: 'coming-soon',
-    players: 0,
-    rating: 0
+    id: 'space-blaster',
+    title: 'Space Blaster',
+    description: 'Defend Earth from alien invaders! Control your spaceship with arrow keys and blast enemies. Survive increasing waves for high scores.',
+    icon: '🚀',
+    status: 'available',
+    players: 12150,
+    rating: 4.7
   },
   {
-    id: 'battle-arena',
-    title: 'Battle Arena',
-    description: 'Compete in real-time battles with other players. Climb the ranks and become champion. Coming soon!',
-    icon: '⚔️',
-    status: 'coming-soon',
-    players: 0,
-    rating: 0
+    id: 'pixel-runner',
+    title: 'Pixel Runner',
+    description: 'Run through a colorful pixelated world! Jump over obstacles and set distance records. How far can you run?',
+    icon: '🏃',
+    status: 'available',
+    players: 9870,
+    rating: 4.5
   }
 ]
 
@@ -63,8 +63,15 @@ export function GameHub({ userId }: GameHubProps) {
   const router = useRouter()
 
   const handlePlayGame = (gameId: string) => {
-    if (gameId === 'treasure-quest') {
-      router.push('/game/treasure-quest')
+    const gameRoutes: Record<string, string> = {
+      'treasure-quest': '/game/treasure-quest',
+      'crystal-match': '/game/crystal-match',
+      'space-blaster': '/game/space-blaster',
+      'pixel-runner': '/game/pixel-runner'
+    }
+    
+    if (gameRoutes[gameId]) {
+      router.push(gameRoutes[gameId])
     }
   }
 
