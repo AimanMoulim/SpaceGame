@@ -16,6 +16,12 @@ interface Bullet {
   y: number
 }
 
+const keysPressed = useRef({
+  ArrowLeft: false,
+  ArrowRight: false,
+  ' ': false
+})
+
 export function SpaceBlasterGame({ onSessionData }: any) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [score, setScore] = useState(0)
@@ -195,6 +201,26 @@ export function SpaceBlasterGame({ onSessionData }: any) {
     setGameOver(false)
   }
 
+  // Mobile controls
+  const handleLeftPress = () => {
+    keysPressed.current['ArrowLeft'] = true
+  }
+  const handleLeftRelease = () => {
+    keysPressed.current['ArrowLeft'] = false
+  }
+  const handleRightPress = () => {
+    keysPressed.current['ArrowRight'] = true
+  }
+  const handleRightRelease = () => {
+    keysPressed.current['ArrowRight'] = false
+  }
+  const handleShoot = () => {
+    keysPressed.current[' '] = true
+    setTimeout(() => {
+      keysPressed.current[' '] = false
+    }, 100)
+  }
+
   return (
     <div
       ref={gameRef}
@@ -202,31 +228,72 @@ export function SpaceBlasterGame({ onSessionData }: any) {
     >
       <h1 className="text-3xl sm:text-4xl font-bold text-cyan-400 mb-3 sm:mb-4">Space Blaster</h1>
 
+      <div className="flex items-center gap-2 mb-2 text-white text-xs sm:text-sm flex-shrink-0">
+        <span>Lives: {lives}</span>
+        <span>|</span>
+        <span>Wave: {wave}</span>
+        <span>|</span>
+        <span>Score: {score}</span>
+      </div>
+
       <div className="w-full max-w-full sm:max-w-md border-2 border-cyan-400 rounded-lg overflow-hidden mb-3 sm:mb-4 flex-shrink-0">
         <canvas ref={canvasRef} className="bg-black w-full h-auto display-block" />
       </div>
 
-      <div className="text-white text-center text-xs sm:text-base flex-shrink-0">
-        <p className="mb-2">Arrow Keys to move • Space to shoot</p>
+      {/* Mobile Controls */}
+      <div className="w-full flex flex-col items-center gap-3 mb-3">
+        <div className="text-white text-center text-xs sm:text-base">
+          <p className="mb-1">Arrow Keys or Buttons to move • Space to shoot</p>
+        </div>
 
-        {gameOver && (
-          <div className="bg-black/70 backdrop-blur-sm rounded-lg p-4 sm:p-8 mt-2 sm:mt-4 max-w-sm">
-            <h2 className="text-2xl sm:text-3xl font-bold text-red-500 mb-3 sm:mb-4">Game Over!</h2>
-            <p className="text-lg sm:text-xl mb-1 sm:mb-2">
-              Final Score: <span className="text-cyan-400 font-bold">{score}</span>
-            </p>
-            <p className="text-lg sm:text-xl mb-4 sm:mb-6">
-              Waves Survived: <span className="text-yellow-400 font-bold">{wave}</span>
-            </p>
-            <button
-              onClick={resetGame}
-              className="px-6 py-2 sm:py-3 bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-bold rounded-lg hover:from-cyan-600 hover:to-blue-600 transition-all text-sm sm:text-base"
-            >
-              Play Again
-            </button>
-          </div>
-        )}
+        {/* Control Buttons */}
+        <div className="flex items-end gap-3">
+          <button
+            onPointerDown={handleLeftPress}
+            onPointerUp={handleLeftRelease}
+            onPointerLeave={handleLeftRelease}
+            className="px-6 py-3 sm:px-8 sm:py-4 bg-gradient-to-b from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 active:from-blue-700 active:to-blue-800 text-white text-lg sm:text-xl font-bold rounded-lg shadow-lg transition-all active:scale-95"
+            style={{ touchAction: 'none' }}
+          >
+            LEFT
+          </button>
+
+          <button
+            onClick={handleShoot}
+            className="px-8 py-3 sm:px-10 sm:py-4 bg-gradient-to-b from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 active:from-red-700 active:to-red-800 text-white text-lg sm:text-xl font-bold rounded-lg shadow-lg transition-all active:scale-95"
+          >
+            SHOOT
+          </button>
+
+          <button
+            onPointerDown={handleRightPress}
+            onPointerUp={handleRightRelease}
+            onPointerLeave={handleRightRelease}
+            className="px-6 py-3 sm:px-8 sm:py-4 bg-gradient-to-b from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 active:from-blue-700 active:to-blue-800 text-white text-lg sm:text-xl font-bold rounded-lg shadow-lg transition-all active:scale-95"
+            style={{ touchAction: 'none' }}
+          >
+            RIGHT
+          </button>
+        </div>
       </div>
+
+      {gameOver && (
+        <div className="bg-black/70 backdrop-blur-sm rounded-lg p-4 sm:p-8 mt-2 sm:mt-4 max-w-sm w-full">
+          <h2 className="text-2xl sm:text-3xl font-bold text-red-500 mb-3 sm:mb-4">Game Over!</h2>
+          <p className="text-lg sm:text-xl mb-1 sm:mb-2">
+            Final Score: <span className="text-cyan-400 font-bold">{score}</span>
+          </p>
+          <p className="text-lg sm:text-xl mb-4 sm:mb-6">
+            Waves Survived: <span className="text-yellow-400 font-bold">{wave}</span>
+          </p>
+          <button
+            onClick={resetGame}
+            className="w-full px-6 py-2 sm:py-3 bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-bold rounded-lg hover:from-cyan-600 hover:to-blue-600 transition-all text-sm sm:text-base"
+          >
+            Play Again
+          </button>
+        </div>
+      )}
     </div>
   )
 }

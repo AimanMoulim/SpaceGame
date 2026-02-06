@@ -8,9 +8,9 @@ const _geist = Geist({ subsets: ['latin'] })
 const _geistMono = Geist_Mono({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Treasure of the Lost Oasis - Adventure Game',
+  title: 'Gaming Space - Multiplayer Gaming Platform',
   description:
-    'A family-friendly 2D platformer adventure game. Explore mystical lands, collect gems, solve puzzles, and reach the exit safely. Play through 4 exciting levels!',
+    'Gaming Space: A modern gaming platform featuring Treasure Quest, Crystal Match, Space Blaster, and Pixel Runner. Compete with players worldwide and climb the leaderboards!',
   generator: 'v0.app',
   viewport: {
     width: 'device-width',
