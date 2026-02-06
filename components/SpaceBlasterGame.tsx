@@ -16,12 +16,6 @@ interface Bullet {
   y: number
 }
 
-const keysPressed = useRef({
-  ArrowLeft: false,
-  ArrowRight: false,
-  ' ': false
-})
-
 export function SpaceBlasterGame({ onSessionData }: any) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [score, setScore] = useState(0)
@@ -29,6 +23,11 @@ export function SpaceBlasterGame({ onSessionData }: any) {
   const [gameOver, setGameOver] = useState(false)
   const [wave, setWave] = useState(1)
   const gameRef = useRef<any>(null)
+  const keysPressed = useRef({
+    ArrowLeft: false,
+    ArrowRight: false,
+    ' ': false
+  })
 
   const gameStateRef = useRef({
     playerX: 175,
